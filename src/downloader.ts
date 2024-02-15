@@ -99,7 +99,7 @@ export async function download_vulkan_sdk(version: string): Promise<string> {
   core.info(`🔽 Downloading Vulkan SDK ${version}`)
   const url = await get_url_vulkan_sdk(version)
   core.info(`    URL: ${url}`)
-  const sdk_path = await tc.downloadTool(url, path.join(platform.TEMP_DIR, get_vulkan_sdk_filename()))
+  const sdk_path = await tc.downloadTool(url, path.join(platform.TEMP_DIR, get_vulkan_sdk_filename(version)))
   core.info(`✔️ Download completed successfully!`)
   core.info(`   File: ${sdk_path}`)
   return sdk_path
@@ -126,14 +126,21 @@ export async function download_vulkan_runtime(version: string): Promise<string> 
  * Returns the platform-based name for the Vulkan SDK archive or installer.
  *
  * @export
+ * @param {string} version- The vulkan sdk version number string.
  * @return {*}  {string} Platform-based name for the Vulkan SDK archive or installer.
  */
-export function get_vulkan_sdk_filename(): string {
+export function get_vulkan_sdk_filename(version: string): string {
   if (platform.IS_WINDOWS) {
     return `VulkanSDK-Installer.exe`
   }
   if (platform.IS_LINUX) {
-    return `vulkansdk-linux-x86_64.tar.gz`
+    // For versions up to 1.3.250.1 the ending is ".tar.gz".
+    // For versions after 1.3.250.1 the ending is ".tar.xz".
+    let filename = `vulkansdk-linux-x86_64.tar.gz`
+    if (1 == compareVersionNumbers(version, '1.3.250.1')) {
+      filename = `vulkansdk-linux-x86_64.tar.xz`
+    }
+    return filename
   }
   if (platform.IS_MAC) {
     return `vulkansdk-macos.dmg`
