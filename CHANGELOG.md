@@ -6,7 +6,9 @@ All notable changes to this project will be documented in this file.
 
 - Changed things.
 
-### Changed
+## [1.0.2] - 02-15-2024
+
+### Added
 
 - action:
   - handle extraction of "tar.xz" archives, because archive type changed
@@ -14,6 +16,9 @@ All notable changes to this project will be documented in this file.
     - "tar.gz" for all versions lesser/equal 1.3.250.1
 - github workflows:
   - allow manual workflow triggering
+
+### Changed
+
 - devcontainer:
   - updated container image to node:21-bookworm-slim
 
@@ -34,7 +39,8 @@ All notable changes to this project will be documented in this file.
 
 <!-- Section for Reference Links -->
 
-[Unreleased]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v0.9.0...v1.0.0
 [0.9.0]: https://github.com/jakoch/install-vulkan-sdk-action/releases/tag/v0.9.0
