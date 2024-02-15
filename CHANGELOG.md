@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 - Changed things.
 
+### Changed
+
+- github workflows:
+  - allow manual workflow triggering
+- devcontainer:
+  - updated container image to node:21-bookworm-slim
+
 ## [1.0.1] - 09-28-2023
 
 - added Changelog
