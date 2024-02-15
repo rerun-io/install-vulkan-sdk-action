@@ -28,7 +28,13 @@ export async function get_url_vulkan_sdk(version: string): Promise<string> {
     VULKAN_SDK_URL = `${DOWNLOAD_BASE_URL}/VulkanSDK-${version}-Installer.exe`
   }
   if (platform.IS_LINUX) {
-    VULKAN_SDK_URL = `${DOWNLOAD_BASE_URL}/vulkansdk-linux-x86_64-${version}.tar.gz`
+    // For versions up to 1.3.250.1 the ending is ".tar.gz".
+    // For versions after 1.3.250.1 the ending is ".tar.xz".
+    let extension = 'tar.gz'
+    if (1 == compareVersionNumbers(version, '1.3.250.1')) {
+      extension = 'tar.xz'
+    }
+    VULKAN_SDK_URL = `${DOWNLOAD_BASE_URL}/vulkansdk-linux-x86_64-${version}.${extension}`
   }
   if (platform.IS_MAC) {
     VULKAN_SDK_URL = `${DOWNLOAD_BASE_URL}/vulkansdk-macos-${version}.dmg`
@@ -54,6 +60,7 @@ export async function get_url_vulkan_runtime(version: string): Promise<string> {
   is_downloadable('VULKAN_RUNTIME', version, VULKAN_RUNTIME_URL)
   return VULKAN_RUNTIME_URL
 }
+
 /**
  * is_downloadable checks, if an URL returns HTTP Status Code 200.
  * Otherwise, it let's the action fail.
@@ -76,6 +83,7 @@ async function is_downloadable(name: string, version: string, url: string) {
     }
   }
 }
+
 /**
  * Download Vulkan SDK.
  *
@@ -109,6 +117,7 @@ export async function download_vulkan_runtime(version: string): Promise<string> 
   core.info(`    File: ${runtime_path}`)
   return runtime_path
 }
+
 /**
  * Returns the platform-based name for the Vulkan SDK archive or installer.
  *
@@ -126,4 +135,26 @@ export function get_vulkan_sdk_filename(): string {
     return `vulkansdk-macos.dmg`
   }
   return 'not-implemented-for-platform'
+}
+
+/**
+ * Compare two version numbers.
+ *
+ * @param {string} ver1 - The first version number string.
+ * @param {string} ver2 - The second version number string.
+ * @returns {number} Returns -1 if ver1 is less than ver2, 1 if ver1 is greater than ver2, or 0 if they are equal.
+ */
+function compareVersionNumbers(v1: string, v2: string): number {
+  // remove dots and handle strings as integers
+  const int_v1 = parseInt(v1.replace(/\./g, ''))
+  const int_v2 = parseInt(v2.replace(/\./g, ''))
+
+  // compare the integers
+  if (int_v1 < int_v2) {
+    return -1
+  } else if (int_v1 > int_v2) {
+    return 1
+  } else {
+    return 0
+  }
 }

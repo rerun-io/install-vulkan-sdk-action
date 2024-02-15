@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- action:
+  - handle extraction of "tar.xz" archives, because archive type changed
+    - "tar.xz" for all versions greater      1.3.261.1
+    - "tar.gz" for all versions lesser/equal 1.3.250.1
 - github workflows:
   - allow manual workflow triggering
 - devcontainer:

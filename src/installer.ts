@@ -189,7 +189,16 @@ export async function install_vulkan_runtime(
  * @return {*}  {Promise<string>} A Promise that resolves to the destination directory path after extraction.
  */
 async function extract_archive(file: string, destination: string): Promise<string> {
-  let extract = tc.extractTar // default extract method on linux: tar
+  const flags: string[] = []
+
+  let extract: (
+    file: string,
+    destination: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    flags?: any
+  ) => Promise<string> = async () => {
+    throw new Error('Extraction function is not properly assigned.')
+  }
 
   if (platform.IS_WINDOWS) {
     if (file.endsWith('.exe')) {
@@ -202,9 +211,21 @@ async function extract_archive(file: string, destination: string): Promise<strin
     }
   } else if (platform.IS_MAC) {
     extract = (file, destination) => tc.extractXar(file, destination)
+  } else if (platform.IS_LINUX) {
+    if (file.endsWith('.tar.gz')) {
+      // extractTar defaults to 'xz' (extracting gzipped tars).
+      extract = (file, destination) => tc.extractTar(file, destination)
+    } else if (file.endsWith('.tar.xz')) {
+      // https://www.man7.org/linux/man-pages/man1/tar.1.html
+      // -J or --xz = filter archive through xz
+      // -x for extract
+      // note: ".tar.bz2" is "-xj"
+      flags.push('-xJ')
+      extract = (file, destination, flags) => tc.extractTar(file, destination, flags)
+    }
   }
 
-  return await extract(file, destination)
+  return await extract(file, destination, flags)
 }
 
 /**
