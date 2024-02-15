@@ -1,7 +1,11 @@
 name: "🚀 Build and Test"
 
-on: # rebuild any PRs and main & release branch changes
+on:
+  # You can manually run this workflow.
+  workflow_dispatch:
+  # Run the workflow on Pull Requests.
   pull_request:
+  # Run the worflow for changes to main and release branch.
   push:
     branches:
       - main
@@ -11,7 +15,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-  build: # make sure build/ci works properly (action development)
+  build: # makes sure the build/ci works properly (action development)
 
 # ---------------------------------------------------------------------------------------
 
@@ -28,7 +32,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-  test: # make sure the action works on a clean machine without building (user case)
+  test: # makes sure the action works on a clean machine without building (user case)
 
 # ---------------------------------------------------------------------------------------
 
