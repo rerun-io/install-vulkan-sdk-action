@@ -1,4 +1,4 @@
-FROM node:21-bullseye-slim
+FROM node:21-bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt upgrade \

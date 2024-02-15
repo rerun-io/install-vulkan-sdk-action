@@ -17,6 +17,7 @@ export interface Inputs {
   optional_components: string[]
   stripdown: boolean
 }
+
 /**
  * Handles the incomming arguments for the action.
  *
@@ -40,6 +41,7 @@ export async function getInputs(): Promise<Inputs> {
     stripdown: /true/i.test(core.getInput('stripdown', {required: false}))
   }
 }
+
 /**
  * GetInputVersion validates the "version" argument.
  * If "vulkan_version" was not set or is empty, assume "latest" version.
@@ -69,6 +71,7 @@ export async function getInputVersion(requested_version: string): Promise<string
 
   return requested_version
 }
+
 /**
  * Validates a version number to conform with the
  * "major.minor.patch.revision" ("1.2.3.4") versioning scheme.
@@ -94,7 +97,7 @@ async function getInputDestination(destination: string): Promise<string> {
     if (platform.IS_WINDOWS) {
       destination = `C:\\VulkanSDK\\`
     }
-    // The .tar.gz file now simply extracts the SDK into a directory of the form 1.x.yy.z.
+    // The .tar.gz file extracts the SDK into a versionized directory of the form 1.x.y.z.
     // The official docs install into the "~" ($HOME) folder.
     if (platform.IS_LINUX) {
       destination = `${platform.HOME_DIR}/vulkan-sdk`

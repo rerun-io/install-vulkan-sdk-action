@@ -1,7 +1,11 @@
 name: "🚀 Build and Test"
 
-on: # rebuild any PRs and main & release branch changes
+on:
+  # You can manually run this workflow.
+  workflow_dispatch:
+  # Run the workflow on Pull Requests.
   pull_request:
+  # Run the worflow for changes to main and release branch.
   push:
     branches:
       - main
@@ -11,7 +15,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-  build: # make sure build/ci works properly (action development)
+  build: # makes sure the build/ci works properly (action development)
 
 # ---------------------------------------------------------------------------------------
 
@@ -28,7 +32,7 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-  test: # make sure the action works on a clean machine without building (user case)
+  test: # makes sure the action works on a clean machine without building (user case)
 
 # ---------------------------------------------------------------------------------------
 
@@ -49,19 +53,34 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v4 # https://github.com/actions/checkout
 
-      - name: Use own action
+      #- name: Use own action - test wrong version number
+      #  uses: ./
+      #  with:
+      #    # Vulkan SDK version to download. Default: latest version.
+      #    # test with intentionally wrong version
+      #    # should say version not available
+      #    # should print list of valid versions
+      #    vulkan_version: 1.2.3.4
+
+      - name: Use own action - from 1.3.261.1 archive is tar.xz on linux
         uses: ./
         with:
           # Vulkan SDK version to download. Default: latest version.
-          vulkan_version: 1.3.250.1
-          # test with intentionally wrong version
-          # should say version not available
-          # should print list of valid versions
-          #vulkan_version: 1.2.3.4
+          vulkan_version:  1.3.261.1
           optional_components: com.lunarg.vulkan.vma, com.lunarg.vulkan.volk
           install_runtime: true
           cache: true
           stripdown: true
+
+      #- name: Use own action - up to 1.3.250.1 archive is tar.gz on linux
+      #  uses: ./
+      #  with:
+      #    # Vulkan SDK version to download. Default: latest version.
+      #    vulkan_version: 1.3.250.1
+      #    optional_components: com.lunarg.vulkan.vma, com.lunarg.vulkan.volk
+      #    install_runtime: true
+      #    cache: true
+      #    stripdown: true
 
       - name: Show Env Vars and SDK folder (Linux)
         if: contains(matrix.config.OS, 'ubuntu')

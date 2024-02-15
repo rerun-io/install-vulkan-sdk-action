@@ -1,5 +1,4 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.194.0/containers/debian
+// For format details, see https://aka.ms/devcontainer.json
 {
   "name": "Debian",
   "build": {
@@ -7,8 +6,7 @@
     // sets the run context to this .devcontainer folder
     "context": "."
   },
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // List of features: https://github.com/devcontainers/features/tree/main/src
+  // Features to add to the dev container. More info: https://containers.dev/features
   "features": {
     // cli tools, zsh, setup a non-root user.
     "ghcr.io/devcontainers/features/common-utils:2": {
@@ -25,7 +23,7 @@
       "username": "vscode"
     },
   },
-  // Set *default* container specific settings.json values on container create.
+  // Set container specific settings.json values on container create.
   "customizations": {
     // Configure properties specific to VS Code.
     "vscode": {
@@ -36,7 +34,6 @@
         "firsttris.vscode-jest-runner"
       ]
     },
-    // Set *default* container specific settings.json values on container create.
     "settings": {
       "extensions.ignoreRecommendations": true,
       "terminal.integrated.defaultProfile.linux": "zsh",
