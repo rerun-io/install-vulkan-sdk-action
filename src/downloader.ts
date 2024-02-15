@@ -73,10 +73,14 @@ async function is_downloadable(name: string, version: string, url: string) {
   try {
     const HttpClientResponse = await http.client.head(url)
     const statusCode = HttpClientResponse.message.statusCode
-    if (statusCode !== undefined && statusCode >= 400) {
-      core.setFailed(`❌ Http(Error): The requested ${name} ${version} is not downloadable using URL: ${url}.`)
+    if (statusCode !== undefined) {
+      if (statusCode >= 400) {
+        core.setFailed(`❌ Http(Error): The requested ${name} ${version} is not downloadable using URL: ${url}.`)
+      }
+      if (statusCode == 200) {
+        core.info(`✔️ Http(200): The requested ${name} ${version} is downloadable.`)
+      }
     }
-    core.info(`✔️ Http(200): The requested ${name} ${version} is downloadable.`)
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
