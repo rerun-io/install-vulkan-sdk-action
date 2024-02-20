@@ -1,6 +1,6 @@
 {
   "name": "install-vulkan-sdk-action",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "A Github Action installing the Vulkan SDK and Runtime.",
   "author": "Jens A. Koch",
@@ -13,7 +13,7 @@
     "package": "ncc build --source-map --minify",
     "test": "jest --verbose --detectOpenHandles --runInBand",
     "test_cov": "jest --verbose --coverage",
-    "npm_audit": "npm audit --audit-level=high",
+    "npm_audit": "npm audit --audit-level=high fix",
     "npm_outdated": "npm outdated",
     "npm_clean-install": "npm clean-install --no-audit --strict-peer-deps",
     "npm_install": "npm install --no-audit --strict-peer-deps",
@@ -57,7 +57,7 @@
     "url": "https://github.com/jakoch/install-vulkan-sdk-action/issues"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=20.0.0",
     "npm": ">=7.0.0"
   }
 }

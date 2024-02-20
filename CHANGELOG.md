@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 - Changed things.
 
+## [1.0.3] - 02-20-2024
+
+### Changed
+
+- action: raised Node version to 20
+
 ## [1.0.2] - 02-15-2024
 
 ### Added
@@ -39,7 +45,8 @@ All notable changes to this project will be documented in this file.
 
 <!-- Section for Reference Links -->
 
-[Unreleased]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v0.9.0...v1.0.0
