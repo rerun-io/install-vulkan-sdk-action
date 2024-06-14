@@ -174,7 +174,7 @@ async function run(): Promise<void> {
       core.warning(`Could not find Vulkan SDK in ${install_path}`)
     }
 
-    if (platform.IS_WINDOWS) {
+    if (platform.IS_WINDOWS && inputs.install_runtime) {
       let runtime_path = `${install_path}\\runtime`
       if (installer.verify_installation_of_runtime(install_path)) {
         core.info(`✔️ [INFO] Path to Vulkan Runtime: ${runtime_path}`)

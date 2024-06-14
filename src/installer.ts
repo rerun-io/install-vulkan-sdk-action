@@ -249,7 +249,7 @@ export function verify_installation_of_sdk(sdk_install_path: string): boolean {
 }
 
 /**
- * vVerify the installation of the Vulkan Runtime.
+ * Verify the installation of the Vulkan Runtime.
  *
  * @export
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
