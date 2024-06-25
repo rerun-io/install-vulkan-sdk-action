@@ -22,6 +22,6 @@ updates:
       # Check for updates to GitHub Actions once a month
       interval: 'weekly'
     commit-message:
-      prefix: "deps(github-actions): "
+      prefix: "deps(gha): "
     labels:
       - "gha-workflow"  
