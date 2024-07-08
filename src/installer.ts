@@ -245,6 +245,16 @@ export function verify_installation_of_sdk(sdk_install_path: string): boolean {
     file = path.normalize(`${sdk_install_path}/bin/vulkaninfoSDK.exe`)
   }
   r = fs.existsSync(file)
+
+  // If the "vulkaninfo" tool exists, execute "vulkaninfo --summary".
+  // Wrap the output of the summary in a collapsible section in the workflow logs.
+  if (r) {
+    core.startGroup(`Vulkan Info Summary`)
+    const run_vulkaninfo = `${file} --summary`
+    execSync(run_vulkaninfo)
+    core.endGroup()
+  }
+
   return r
 }
 
