@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - updated devcontainer incl. Dockerfile
+- renamed __tests__ Folder to tests
 
 ## [1.0.5] - 2024-12-06
 

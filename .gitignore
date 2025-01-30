@@ -2,8 +2,8 @@
 node_modules
 
 # Ignore built ts files
-__tests__/runner/*
-lib/**/*
+tests/*
+lib/*
 
 # temp folder
 tmp/*
