@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - "It was a bright day in April, and the clocks were striking thirteen." - 1984
 
+## [1.0.6] - 2024-01-30
+
 ### Added
 - added biome
 - updated install verify step: if vulkaninfo exists, run "vulkaninfo --summary"
@@ -72,8 +74,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Section for Reference Links -->
 
-[vNext]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.5...HEAD
-[1.0.5]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.3...v1.0.4
+[vNext]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.6...HEAD
+[1.0.5]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.5...v1.0.6
+[1.0.5]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.1...v1.0.2
