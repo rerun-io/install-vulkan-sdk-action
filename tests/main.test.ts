@@ -1,8 +1,8 @@
-import * as io from '@actions/io'
+//import * as io from '@actions/io'
 import { HttpClient } from '@actions/http-client'
 import { getPlatform } from '../src/platform'
-import * as downloader from '../src/downloader'
-import * as installer from '../src/installer'
+//import * as downloader from '../src/downloader'
+//import * as installer from '../src/installer'
 import * as inputs from '../src/inputs'
 import * as version_getter from '../src/versiongetter'
 import * as path from 'path'
@@ -107,8 +107,8 @@ describe('version', () => {
   })
 })*/
 
-describe('installer', () => {
-  /*it('Installs SDK into "../third-party/vulkan-sdk" folder, when using a valid version number.', async () => {
+/*describe('installer', () => {
+  it('Installs SDK into "../third-party/vulkan-sdk" folder, when using a valid version number.', async () => {
     const version = '1.2.189.0'
     const sdk_download_path = await downloader.download_vulkan_sdk(version)
 
@@ -119,9 +119,10 @@ describe('installer', () => {
     return installer.install_vulkan_sdk(sdk_download_path, sdk_install_path, version).then(data => {
       expect(data).not.toEqual('')
     })
-  })*/
+  })
 
   it('Allows to install optional components', async () => {
     const input_optional_components = 'com.lunarg.vulkan.32bit, com.lunarg.vulkan.debug32'
   })
 })
+*/
