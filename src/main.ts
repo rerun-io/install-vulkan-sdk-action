@@ -1,6 +1,6 @@
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
-import * as path from 'path'
+import * as path from 'node:path'
 import * as downloader from './downloader'
 import * as input from './inputs'
 import * as installer from './installer'
@@ -15,17 +15,14 @@ import * as version_getter from './versiongetter'
  *
  * @param {string} version - The Vulkan SDK version.
  * @param {string} path - The Vulkan SDK installation path.
- * @return {*}  {Promise<{ cachePrimaryKey: string; cacheRestoreKeys: string[]; }>}
+ * @return { cachePrimaryKey: string; cacheRestoreKeys: string[]; }
  */
-async function getCacheKeys(
-  version: string,
-  path: string
-): Promise<{cachePrimaryKey: string; cacheRestoreKeys: string[]}> {
+export function getCacheKeys(version: string, path: string): { cachePrimaryKey: string; cacheRestoreKeys: string[] } {
   // Note: getPlatform() is used to get "windows", instead of OS_PLATFORM value "win32"
   const cachePrimaryKey = `cache-${platform.getPlatform()}-${platform.OS_ARCH}-vulkan-sdk-${version}`
   const cacheRestoreKey1 = `cache-${platform.getPlatform()}-${platform.OS_ARCH}-vulkan-sdk-`
   const cacheRestoreKey2 = `cache-${platform.getPlatform()}-${platform.OS_ARCH}-`
-  return {cachePrimaryKey, cacheRestoreKeys: [cacheRestoreKey1, cacheRestoreKey2]}
+  return { cachePrimaryKey, cacheRestoreKeys: [cacheRestoreKey1, cacheRestoreKey2] }
 }
 
 /**
@@ -49,7 +46,7 @@ async function get_vulkan_sdk(
 ): Promise<string> {
   let install_path: string
 
-  const {cachePrimaryKey, cacheRestoreKeys} = await getCacheKeys(version, destination)
+  const { cachePrimaryKey, cacheRestoreKeys } = await getCacheKeys(version, destination)
 
   // restore from cache
   if (use_cache) {
@@ -91,11 +88,11 @@ async function get_vulkan_sdk(
     }
     try {
       const cacheId = await cache.saveCache([install_path], cachePrimaryKey)
-      if (cacheId != -1) {
+      if (cacheId !== -1) {
         core.info(`🎯 [Cache] Saved Vulkan SDK in path: '${install_path}'. Cache Save ID: '${cacheId}'.`)
       }
-    } catch (error: any) {
-      core.warning(error)
+    } catch (error) {
+      core.warning((error as Error).message)
     }
   }
   return install_path
@@ -108,7 +105,7 @@ async function get_vulkan_sdk(
  * @param {Error} error
  */
 function errorHandler(error: Error): void {
-  let message = error.stack || error.message || String(error)
+  const message = error.stack || error.message || String(error)
   core.setFailed(message)
 }
 
@@ -175,7 +172,7 @@ async function run(): Promise<void> {
     }
 
     if (platform.IS_WINDOWS && inputs.install_runtime) {
-      let runtime_path = `${install_path}\\runtime`
+      const runtime_path = `${install_path}\\runtime`
       if (installer.verify_installation_of_runtime(install_path)) {
         core.info(`✔️ [INFO] Path to Vulkan Runtime: ${runtime_path}`)
       } else {
@@ -184,7 +181,7 @@ async function run(): Promise<void> {
     }
 
     core.info(`✅ Done.`)
-  } catch (error: any) {
+  } catch (error) {
     errorHandler(error as Error)
   }
 }

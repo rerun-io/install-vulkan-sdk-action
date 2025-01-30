@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import {execSync} from 'child_process'
-import * as fs from 'fs'
-import * as path from 'path'
+import { execSync } from 'node:child_process'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import * as platform from './platform'
 
 /**
@@ -55,7 +55,7 @@ export async function install_vulkan_sdk_linux(
   destination: string,
   optional_components: string[]
 ): Promise<string> {
-  let install_path = await extract_archive(sdk_path, destination)
+  const install_path = await extract_archive(sdk_path, destination)
 
   return install_path
 }
@@ -74,7 +74,7 @@ export async function install_vulkan_sdk_mac(
   destination: string,
   optional_components: string[]
 ): Promise<string> {
-  let install_path = ''
+  const install_path = ''
 
   // https://vulkan.lunarg.com/doc/view/1.2.189.0/mac/getting_started.html
   // TODO
@@ -82,6 +82,8 @@ export async function install_vulkan_sdk_mac(
   //    local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep -i vulkansdk | awk 'END {print $NF}')
   // 2. build installer cmd
   //    sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
+
+  await execSync(`hdiutil attach ${sdk_path}`) // TODO
 
   return install_path
 }
@@ -103,7 +105,7 @@ export async function install_vulkan_sdk_windows(
   // Warning: The installation path cannot be relative, please specify an absolute path.
   // Changing the destination to a versionzed folder "C:\VulkanSDK\1.3.250.1"
 
-  let cmd_args = [
+  const cmd_args = [
     '--root',
     destination,
     '--accept-licenses',
@@ -112,7 +114,7 @@ export async function install_vulkan_sdk_windows(
     'install',
     ...optional_components
   ]
-  let installer_args = cmd_args.join(' ')
+  const installer_args = cmd_args.join(' ')
 
   //
   // The full CLI command looks like:
@@ -133,11 +135,15 @@ export async function install_vulkan_sdk_windows(
   core.debug(`Command: ${run_as_admin_cmd}`)
 
   try {
-    execSync(run_as_admin_cmd)
+    await execSync(run_as_admin_cmd)
     //let stdout: string = execSync(run_as_admin_cmd, {stdio: 'inherit'}).toString().trim()
     //process.stdout.write(stdout)
-  } catch (error: any) {
-    core.error(error.toString())
+  } catch (error) {
+    if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('An unknown error occurred.')
+    }
     core.setFailed(`Installer failed. Arguments used: ${installer_args}`)
   }
 
@@ -176,7 +182,7 @@ export async function install_vulkan_runtime(
   const temp_top_level_folder_path = path.join(temp_install_path, top_level_folder) // C:\Users\RUNNER~1\AppData\Local\Temp\vulkan-runtime\VulkanRT-1.3.250.1-Components
   const install_path = path.normalize(`${destination}/${version}/runtime`) // C:\VulkanSDK\1.3.250.1\runtime
   copy_folder(temp_top_level_folder_path, install_path)
-  fs.rmSync(temp_install_path, {recursive: true})
+  fs.rmSync(temp_install_path, { recursive: true })
   core.info(`   Installed into folder: ${install_path}`)
   return install_path
 }
@@ -195,8 +201,8 @@ async function extract_archive(file: string, destination: string): Promise<strin
     file: string,
     destination: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    flags?: any
-  ) => Promise<string> = async () => {
+    flags: string[]
+  ) => Promise<string> = (file, destination, flags) => {
     throw new Error('Extraction function is not properly assigned.')
   }
 
@@ -315,7 +321,7 @@ export function stripdown_installation_of_sdk(sdk_install_path: string): void {
 function remove_folder_if_exists(folder: string): boolean {
   try {
     if (fs.existsSync(folder)) {
-      fs.rmSync(folder, {recursive: true})
+      fs.rmSync(folder, { recursive: true })
       core.info(`Deleted folder: ${folder}`)
       return true
     } else {
@@ -333,23 +339,23 @@ function remove_folder_if_exists(folder: string): boolean {
  * @param {string[]} folders - The folders to remove.
  */
 function remove_folders_if_exist(folders: string[]): void {
-  folders.forEach(folder => {
+  for (const folder of folders) {
     remove_folder_if_exists(folder)
-  })
+  }
 }
 
 function delete_files_in_folder(folder: string): void {
-  fs.readdirSync(folder).forEach(file => {
+  for (const file of fs.readdirSync(folder)) {
     const filePath = path.join(folder, file)
     if (fs.statSync(filePath).isDirectory()) {
-      // If subdirectory, skip it
-      return
+      // biome-ignore lint/correctness/noUnnecessaryContinue: If subdirectory, skip it
+      continue
     } else {
       // If file, delete it
       fs.unlinkSync(filePath)
       core.info(`Deleted file: ${filePath}`)
     }
-  })
+  }
 }
 /**
  * Copy a folder.
@@ -359,15 +365,15 @@ function delete_files_in_folder(folder: string): void {
  */
 function copy_folder(from: string, to: string) {
   if (!fs.existsSync(to)) {
-    fs.mkdirSync(to, {recursive: true})
+    fs.mkdirSync(to, { recursive: true })
   }
-  fs.readdirSync(from).forEach(element => {
+  for (const element of fs.readdirSync(from)) {
     if (fs.lstatSync(path.join(from, element)).isFile()) {
       fs.copyFileSync(path.join(from, element), path.join(to, element))
     } else {
       copy_folder(path.join(from, element), path.join(to, element))
     }
-  })
+  }
 }
 /**
  * Wait a bit...

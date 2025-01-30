@@ -1,4 +1,4 @@
-import * as os from 'os'
+import * as os from 'node:os'
 
 export const HOME_DIR: string = os.homedir() // $HOME
 

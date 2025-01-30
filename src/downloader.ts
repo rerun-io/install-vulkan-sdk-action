@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache' // https://github.com/actions/toolkit/tree/main/packages/tool-cache
-import * as path from 'path'
+import * as path from 'node:path'
 import * as http from './http'
 import * as platform from './platform'
 
@@ -31,7 +31,7 @@ export async function get_url_vulkan_sdk(version: string): Promise<string> {
     // For versions up to 1.3.250.1 the ending is ".tar.gz".
     // For versions after 1.3.250.1 the ending is ".tar.xz".
     let extension = 'tar.gz'
-    if (1 == compareVersionNumbers(version, '1.3.250.1')) {
+    if (1 === compareVersionNumbers(version, '1.3.250.1')) {
       extension = 'tar.xz'
     }
     VULKAN_SDK_URL = `${DOWNLOAD_BASE_URL}/vulkansdk-linux-x86_64-${version}.${extension}`
@@ -40,7 +40,7 @@ export async function get_url_vulkan_sdk(version: string): Promise<string> {
     VULKAN_SDK_URL = `${DOWNLOAD_BASE_URL}/vulkansdk-macos-${version}.dmg`
   }
 
-  is_downloadable('VULKAN_SDK', version, VULKAN_SDK_URL)
+  await is_downloadable('VULKAN_SDK', version, VULKAN_SDK_URL)
 
   return VULKAN_SDK_URL
 }
@@ -48,16 +48,17 @@ export async function get_url_vulkan_sdk(version: string): Promise<string> {
 /**
  * Get download url for Vulkan Runtime.
  *
+ * Windows:
+ * Latest Version:  https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-runtime-components.zip
+ * Versionized:     https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanRT-1.3.216.0-Components.zip
+ *
  * @export
  * @param {string} version - The runtime version to download.
  * @return {*}  {Promise<string>} Returns the download url.
  */
 export async function get_url_vulkan_runtime(version: string): Promise<string> {
-  // Windows:
-  // Latest Version:  https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-runtime-components.zip
-  // Versionized:     https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanRT-1.3.216.0-Components.zip
   const VULKAN_RUNTIME_URL = `https://sdk.lunarg.com/sdk/download/${version}/windows/vulkan-runtime-components.zip`
-  is_downloadable('VULKAN_RUNTIME', version, VULKAN_RUNTIME_URL)
+  await is_downloadable('VULKAN_RUNTIME', version, VULKAN_RUNTIME_URL)
   return VULKAN_RUNTIME_URL
 }
 
@@ -77,7 +78,7 @@ async function is_downloadable(name: string, version: string, url: string) {
       if (statusCode >= 400) {
         core.setFailed(`❌ Http(Error): The requested ${name} ${version} is not downloadable using URL: ${url}.`)
       }
-      if (statusCode == 200) {
+      if (statusCode === 200) {
         core.info(`✔️ Http(200): The requested ${name} ${version} is downloadable.`)
       }
     }
@@ -137,7 +138,7 @@ export function get_vulkan_sdk_filename(version: string): string {
     // For versions up to 1.3.250.1 the ending is ".tar.gz".
     // For versions after 1.3.250.1 the ending is ".tar.xz".
     let filename = `vulkansdk-linux-x86_64.tar.gz`
-    if (1 == compareVersionNumbers(version, '1.3.250.1')) {
+    if (1 === compareVersionNumbers(version, '1.3.250.1')) {
       filename = `vulkansdk-linux-x86_64.tar.xz`
     }
     return filename
@@ -157,8 +158,8 @@ export function get_vulkan_sdk_filename(version: string): string {
  */
 function compareVersionNumbers(v1: string, v2: string): number {
   // remove dots and handle strings as integers
-  const int_v1 = parseInt(v1.replace(/\./g, ''))
-  const int_v2 = parseInt(v2.replace(/\./g, ''))
+  const int_v1 = Number.parseInt(v1.replace(/\./g, ''))
+  const int_v2 = Number.parseInt(v2.replace(/\./g, ''))
 
   // compare the integers
   if (int_v1 < int_v2) {

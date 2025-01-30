@@ -1,13 +1,13 @@
 import * as io from '@actions/io'
-import {HttpClient} from '@actions/http-client'
-import {getPlatform} from '../src/platform'
+import { HttpClient } from '@actions/http-client'
+import { getPlatform } from '../src/platform'
 import * as downloader from '../src/downloader'
 import * as installer from '../src/installer'
 import * as inputs from '../src/inputs'
 import * as version_getter from '../src/versiongetter'
 import * as path from 'path'
-import {expect, test} from '@jest/globals'
-import {env} from 'process'
+import { expect, test } from '@jest/globals'
+import { env } from 'process'
 
 env.RUNNER_TOOL_CACHE = path.join(__dirname, '../tmp/runner_tools')
 env.RUNNER_TEMP = path.join(__dirname, '../tmp/runner_tmpdir')
@@ -66,8 +66,10 @@ describe('version', () => {
   afterEach(() => jest.resetAllMocks())
 
   it('Fetches the list of latest versions.', async () => {
-    const latestVersionResponseData = {linux: '1.3.216.0', mac: '1.3.216.0', windows: '1.3.216.0'}
-    HttpClient.prototype.getJson = jest.fn().mockResolvedValue({statusCode: 200, result: {latestVersionResponseData}})
+    const latestVersionResponseData = { linux: '1.3.216.0', mac: '1.3.216.0', windows: '1.3.216.0' }
+    HttpClient.prototype.getJson = jest
+      .fn()
+      .mockResolvedValue({ statusCode: 200, result: { latestVersionResponseData } })
 
     const latestVersions = await version_getter.getLatestVersions()
 

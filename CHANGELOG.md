@@ -12,12 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "It was a bright day in April, and the clocks were striking thirteen." - 1984
 
 ### Added
+- added biome
 - updated install verify step: if vulkaninfo exists, run "vulkaninfo --summary"
 
 ### Changed
 - updated devcontainer incl. Dockerfile
 - renamed __tests__ Folder to tests
 - removed eslint and prettier
+- fixed linter and formatting issues found by biome
 
 ## [1.0.5] - 2024-12-06
 

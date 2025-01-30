@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import * as path from 'path'
+import * as path from 'node:path'
 import * as platform from './platform'
 import * as version_getter from './versiongetter'
 
@@ -33,12 +33,12 @@ export async function getInputs(): Promise<Inputs> {
     // Do not simply use "version", because if "with: version:" is not set (default to latest is wanted),
     // but an environment variable is defined, that will be used (version = env.VERSION)
     // VERSION is often set to env for artifact names.
-    version: await getInputVersion(core.getInput('vulkan_version', {required: false})),
-    destination: await getInputDestination(core.getInput('destination', {required: false})),
-    install_runtime: /true/i.test(core.getInput('install_runtime', {required: false})),
-    use_cache: /true/i.test(core.getInput('cache', {required: false})),
-    optional_components: await getInputOptionalComponents(core.getInput('optional_components', {required: false})),
-    stripdown: /true/i.test(core.getInput('stripdown', {required: false}))
+    version: await getInputVersion(core.getInput('vulkan_version', { required: false })),
+    destination: await getInputDestination(core.getInput('destination', { required: false })),
+    install_runtime: /true/i.test(core.getInput('install_runtime', { required: false })),
+    use_cache: /true/i.test(core.getInput('cache', { required: false })),
+    optional_components: await getInputOptionalComponents(core.getInput('optional_components', { required: false })),
+    stripdown: /true/i.test(core.getInput('stripdown', { required: false }))
   }
 }
 
@@ -89,9 +89,9 @@ export function validateVersion(version: string): boolean {
  * getInputDestination validates the "destination" argument.
  *
  * @param {string} destination
- * @return {*}  {Promise<string>}
+ * @return {string} string
  */
-async function getInputDestination(destination: string): Promise<string> {
+export function getInputDestination(destination: string): string {
   // return default install locations for platform
   if (!destination || destination === '') {
     if (platform.IS_WINDOWS) {
@@ -147,14 +147,14 @@ export function getInputOptionalComponents(optional_components: string): string[
     .map((item: string) => item.trim())
     .filter(Boolean)
 
-  let invalid_input_components: string[] = input_components.filter(
+  const invalid_input_components: string[] = input_components.filter(
     item => optional_components_allowlist.includes(item) === false
   )
   if (invalid_input_components.length) {
     core.info(`❌ Please remove the following invalid optional_components: ${invalid_input_components}`)
   }
 
-  let valid_input_components: string[] = input_components.filter(
+  const valid_input_components: string[] = input_components.filter(
     item => optional_components_allowlist.includes(item) === true
   )
   if (valid_input_components.length) {
