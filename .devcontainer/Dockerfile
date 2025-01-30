@@ -1,23 +1,37 @@
 FROM node:21-bookworm-slim
 
-# Switch to non-interactive mode for apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils dialog 2>&1 && \
+RUN echo "Packages" && \
     apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
-    curl wget gnupg dirmngr xz-utils mc git && \
-	  # install node, yarn, npm
-    npm install -g n@latest && \
-    npm install -g yarn@latest --force && \
-    npm install -g npm@latest && \
-	  # cleanup
+    gnupg \
+    curl wget \
+    dirmngr \
+    git git-lfs \
+    jq \
+    grep ripgrep \
+    zip unzip xz-utils xzdec \
+    mc && \
+    # Cleanup
     apt-get autoremove -y && \
     apt-get clean autoclean && \
-	  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN echo "Setup npm, node, yarn" && \
+	  # Setup n (Node.js version manager)
+    npm install -g n@latest && \
+    n 20.17.0 && \
+	  node --version && \
+    # Setup npm (Node.js package manager)
+    npm install -g npm@latest && \
+    npm --version && \
+    # Setup yarn
+    npm install -g yarn@latest --force && \
+    yarn --version
 
 # Install act (GitHub Actions local runner. See also https://github.com/nektos/act)
-# 'act' doesn't work on devcontainer. It works locally and on WSL.
+# 'act' doesn't work on devcontainer. It works on local as well as on WSL.
 # RUN curl https://raw.githubusercontent.com/nektos/act/master/install.sh | bash
 
 # Switch back to dialog for any ad-hoc use of apt-get

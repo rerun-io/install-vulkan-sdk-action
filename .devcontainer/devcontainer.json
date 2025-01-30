@@ -31,7 +31,9 @@
       "extensions": [
         // EditorConfig
         "EditorConfig.EditorConfig",
-        "firsttris.vscode-jest-runner"
+        "firsttris.vscode-jest-runner",
+        // biome
+        "biomejs.biome"
       ]
     },
     "settings": {

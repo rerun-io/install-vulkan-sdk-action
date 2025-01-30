@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - updated install verify step: if vulkaninfo exists, run "vulkaninfo --summary"
 
+### Changed
+- updated devcontainer incl. Dockerfile
+
 ## [1.0.5] - 2024-12-06
 
 ## Fixed
