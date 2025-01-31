@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  SPDX-FileCopyrightText: 2021-2024 Jens A. Koch
+ *  SPDX-License-Identifier: MIT
+ *--------------------------------------------------------------------------------------------*/
+
 import * as core from '@actions/core'
 import * as http from './http'
 import * as platform from './platform'
@@ -73,7 +78,7 @@ export const getLatestVersions = async (): Promise<LatestVersionResponse | null>
  * @param {string} version
  * @return {*}  {Promise<string>}
  */
-export async function resolve_version(version: string): Promise<string> {
+export async function resolveVersion(version: string): Promise<string> {
   let versionToDownload: string = version
   if (version === 'latest') {
     try {

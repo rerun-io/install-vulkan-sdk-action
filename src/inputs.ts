@@ -1,7 +1,12 @@
+/*---------------------------------------------------------------------------------------------
+ *  SPDX-FileCopyrightText: 2021-2024 Jens A. Koch
+ *  SPDX-License-Identifier: MIT
+ *--------------------------------------------------------------------------------------------*/
+
 import * as core from '@actions/core'
 import * as path from 'node:path'
 import * as platform from './platform'
-import * as version_getter from './versiongetter'
+import * as versionGetter from './versiongetter'
 
 /**
  * List of available Input arguments
@@ -12,9 +17,9 @@ import * as version_getter from './versiongetter'
 export interface Inputs {
   version: string
   destination: string
-  install_runtime: boolean
-  use_cache: boolean
-  optional_components: string[]
+  installRuntime: boolean
+  useCache: boolean
+  optionalComponents: string[]
   stripdown: boolean
 }
 
@@ -35,9 +40,9 @@ export async function getInputs(): Promise<Inputs> {
     // VERSION is often set to env for artifact names.
     version: await getInputVersion(core.getInput('vulkan_version', { required: false })),
     destination: await getInputDestination(core.getInput('destination', { required: false })),
-    install_runtime: /true/i.test(core.getInput('install_runtime', { required: false })),
-    use_cache: /true/i.test(core.getInput('cache', { required: false })),
-    optional_components: await getInputOptionalComponents(core.getInput('optional_components', { required: false })),
+    installRuntime: /true/i.test(core.getInput('install_runtime', { required: false })),
+    useCache: /true/i.test(core.getInput('cache', { required: false })),
+    optionalComponents: await getInputOptionalComponents(core.getInput('optional_components', { required: false })),
     stripdown: /true/i.test(core.getInput('stripdown', { required: false }))
   }
 }
@@ -50,26 +55,26 @@ export async function getInputs(): Promise<Inputs> {
  * @param {string} requested_version
  * @return {*}  {Promise<string>}
  */
-export async function getInputVersion(requested_version: string): Promise<string> {
+export async function getInputVersion(requestedVersion: string): Promise<string> {
   // if "vulkan_version" was not set or is empty, assume "latest" version
-  if (requested_version === '') {
-    requested_version = 'latest'
-    return requested_version
+  if (requestedVersion === '') {
+    requestedVersion = 'latest'
+    return requestedVersion
   }
 
   // throw error, if requestedVersion is a crappy version number
-  if (!requested_version && !validateVersion(requested_version)) {
-    const availableVersions = await version_getter.getAvailableVersions()
+  if (!requestedVersion && !validateVersion(requestedVersion)) {
+    const availableVersions = await versionGetter.getAvailableVersions()
     const versions = JSON.stringify(availableVersions, null, 2)
 
     throw new Error(
-      `Invalid format of "vulkan_version: (${requested_version}").
+      `Invalid format of "vulkan_version: (${requestedVersion}").
        Please specify a version using the format 'major.minor.build.rev'.
        The following versions are available: ${versions}.`
     )
   }
 
-  return requested_version
+  return requestedVersion
 }
 
 /**
@@ -125,12 +130,12 @@ export function getInputDestination(destination: string): string {
  * @param {string} optional_components
  * @return {*}  {string[]}
  */
-export function getInputOptionalComponents(optional_components: string): string[] {
-  if (!optional_components) {
+export function getInputOptionalComponents(optionalComponents: string): string[] {
+  if (!optionalComponents) {
     return []
   }
 
-  const optional_components_allowlist: string[] = [
+  const optionalComponentsAllowlist: string[] = [
     'com.lunarg.vulkan.32bit',
     'com.lunarg.vulkan.sdl2',
     'com.lunarg.vulkan.glm',
@@ -142,24 +147,24 @@ export function getInputOptionalComponents(optional_components: string): string[
     'com.lunarg.vulkan.debug'
   ]
 
-  const input_components: string[] = optional_components
+  const inputComponents: string[] = optionalComponents
     .split(',')
     .map((item: string) => item.trim())
     .filter(Boolean)
 
-  const invalid_input_components: string[] = input_components.filter(
-    item => optional_components_allowlist.includes(item) === false
+  const invalidInputComponents: string[] = inputComponents.filter(
+    item => optionalComponentsAllowlist.includes(item) === false
   )
-  if (invalid_input_components.length) {
-    core.info(`❌ Please remove the following invalid optional_components: ${invalid_input_components}`)
+  if (invalidInputComponents.length) {
+    core.info(`❌ Please remove the following invalid optional_components: ${invalidInputComponents}`)
   }
 
-  const valid_input_components: string[] = input_components.filter(
-    item => optional_components_allowlist.includes(item) === true
+  const validInputComponents: string[] = inputComponents.filter(
+    item => optionalComponentsAllowlist.includes(item) === true
   )
-  if (valid_input_components.length) {
-    core.info(`✔️ Installing Optional Components: ${valid_input_components}`)
+  if (validInputComponents.length) {
+    core.info(`✔️ Installing Optional Components: ${validInputComponents}`)
   }
 
-  return valid_input_components
+  return validInputComponents
 }

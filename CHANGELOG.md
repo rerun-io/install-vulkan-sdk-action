@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - "It was a bright day in April, and the clocks were striking thirteen." - 1984
 
+### Changed
+- moved downloader.is_downloadable() to http.isDownloadable()
+- moved downloader.compareVersionNumbers() to versions.compare()
+- applied changes according to "useNamingConvention"
+
 ## [1.0.6] - 2024-01-30
 
 ### Added

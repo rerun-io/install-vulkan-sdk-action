@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  SPDX-FileCopyrightText: 2021-2024 Jens A. Koch
+ *  SPDX-License-Identifier: MIT
+ *--------------------------------------------------------------------------------------------*/
+
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import * as path from 'node:path'
@@ -5,7 +10,7 @@ import * as downloader from './downloader'
 import * as input from './inputs'
 import * as installer from './installer'
 import * as platform from './platform'
-import * as version_getter from './versiongetter'
+import * as versionGetter from './versiongetter'
 
 /**
  * Get Cache Keys
@@ -36,24 +41,24 @@ export function getCacheKeys(version: string, path: string): { cachePrimaryKey: 
  * @param {boolean} install_runtime - Whether to install the Vulkan runtime.
  * @return {*}  {Promise<string>} A Promise that resolves to the path where the Vulkan SDK is installed.
  */
-async function get_vulkan_sdk(
+async function getVulkanSdk(
   version: string,
   destination: string,
-  optional_components: string[],
-  use_cache: boolean,
+  optionalComponents: string[],
+  useCache: boolean,
   stripdown: boolean,
-  install_runtime: boolean
+  installRuntime: boolean
 ): Promise<string> {
-  let install_path: string
+  let installPath: string
 
   const { cachePrimaryKey, cacheRestoreKeys } = await getCacheKeys(version, destination)
 
   // restore from cache
-  if (use_cache) {
+  if (useCache) {
     let cacheHit = undefined
     if (platform.IS_WINDOWS) {
-      const versionized_destination_path = path.normalize(`${destination}/${version}`)
-      cacheHit = await cache.restoreCache([versionized_destination_path], cachePrimaryKey, cacheRestoreKeys)
+      const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
+      cacheHit = await cache.restoreCache([versionizedDestinationPath], cachePrimaryKey, cacheRestoreKeys)
     } else {
       cacheHit = await cache.restoreCache([destination], cachePrimaryKey, cacheRestoreKeys)
     }
@@ -72,30 +77,30 @@ async function get_vulkan_sdk(
   */
 
   // Download and install SDK
-  const vulkan_sdk_path = await downloader.download_vulkan_sdk(version)
-  install_path = await installer.install_vulkan_sdk(vulkan_sdk_path, destination, version, optional_components)
+  const vulkanSdkPath = await downloader.downloadVulkanSdk(version)
+  installPath = await installer.installVulkanSdk(vulkanSdkPath, destination, version, optionalComponents)
 
   // Download and install Runtime after the SDK. This allows caching both.
-  if (platform.IS_WINDOWS && install_runtime) {
-    const vulkan_runtime_path = await downloader.download_vulkan_runtime(version)
-    await installer.install_vulkan_runtime(vulkan_runtime_path, destination, version)
+  if (platform.IS_WINDOWS && installRuntime) {
+    const vulkanRuntimePath = await downloader.downloadVulkanRuntime(version)
+    await installer.installVulkanRuntime(vulkanRuntimePath, destination, version)
   }
 
   // cache install folder
-  if (use_cache) {
+  if (useCache) {
     if (stripdown) {
-      installer.stripdown_installation_of_sdk(install_path)
+      installer.stripdownInstallationOfSdk(installPath)
     }
     try {
-      const cacheId = await cache.saveCache([install_path], cachePrimaryKey)
+      const cacheId = await cache.saveCache([installPath], cachePrimaryKey)
       if (cacheId !== -1) {
-        core.info(`🎯 [Cache] Saved Vulkan SDK in path: '${install_path}'. Cache Save ID: '${cacheId}'.`)
+        core.info(`🎯 [Cache] Saved Vulkan SDK in path: '${installPath}'. Cache Save ID: '${cacheId}'.`)
       }
     } catch (error) {
       core.warning((error as Error).message)
     }
   }
-  return install_path
+  return installPath
 }
 
 /**
@@ -118,24 +123,24 @@ async function run(): Promise<void> {
   try {
     const inputs: input.Inputs = await input.getInputs()
 
-    const version = await version_getter.resolve_version(inputs.version)
+    const version = await versionGetter.resolveVersion(inputs.version)
 
-    const sdk_path = await get_vulkan_sdk(
+    const sdkPath = await getVulkanSdk(
       version,
       inputs.destination,
-      inputs.optional_components,
-      inputs.use_cache,
+      inputs.optionalComponents,
+      inputs.useCache,
       inputs.stripdown,
-      inputs.install_runtime
+      inputs.installRuntime
     )
 
     // let install_path be a versionized path to the SDK
-    let install_path = sdk_path
-    if (!sdk_path.includes(version)) {
-      install_path = path.normalize(`${sdk_path}/${version}`)
+    let installPath = sdkPath
+    if (!sdkPath.includes(version)) {
+      installPath = path.normalize(`${sdkPath}/${version}`)
     }
 
-    if (installer.verify_installation_of_sdk(install_path)) {
+    if (installer.verifyInstallationOfSdk(installPath)) {
       // Setup Paths to the Vulkan SDK
       //
       // https://vulkan.lunarg.com/doc/sdk/1.3.261.1/linux/getting_started.html#set-up-the-runtime-environment
@@ -145,38 +150,38 @@ async function run(): Promise<void> {
       // We set PATH, VULKAN_SDK, VK_LAYER_PATH, LD_LIBRARY_PATH and additionally VULKAN_VERSION.
 
       // export PATH=$VULKAN_SDK/bin:$PATH
-      core.addPath(`${install_path}/bin`)
+      core.addPath(`${installPath}/bin`)
       core.info(`✔️ [PATH] Added path to Vulkan SDK to environment variable PATH.`)
 
       // export VULKAN_SDK=~/vulkan/1.x.yy.z/x86_64
-      core.exportVariable('VULKAN_SDK', install_path)
-      core.info(`✔️ [ENV] Set env variable VULKAN_SDK -> "${install_path}".`)
+      core.exportVariable('VULKAN_SDK', installPath)
+      core.info(`✔️ [ENV] Set env variable VULKAN_SDK -> "${installPath}".`)
 
       core.exportVariable('VULKAN_VERSION', version)
       core.info(`✔️ [ENV] Set env variable VULKAN_VERSION -> "${version}".`)
 
       if (platform.IS_LINUX) {
         // export VK_LAYER_PATH=$VULKAN_SDK/etc/vulkan/explicit_layer.d
-        const vk_layer_path = `${install_path}/etc/vulkan/explicit_layer.d`
-        core.exportVariable('VK_LAYER_PATH', vk_layer_path)
-        core.info(`✔️ [ENV] Set env variable VK_LAYER_PATH -> "${vk_layer_path}".`)
+        const vkLayerPath = `${installPath}/etc/vulkan/explicit_layer.d`
+        core.exportVariable('VK_LAYER_PATH', vkLayerPath)
+        core.info(`✔️ [ENV] Set env variable VK_LAYER_PATH -> "${vkLayerPath}".`)
 
         // export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-        const ld_library_path = process.env.LD_LIBRARY_PATH || ''
-        const vk_ld_library_path = `${install_path}/lib:${ld_library_path}`
-        core.exportVariable('LD_LIBRARY_PATH', vk_ld_library_path)
-        core.info(`✔️ [ENV] Set env variable LD_LIBRARY_PATH -> "${vk_ld_library_path}".`)
+        const ldLibraryPath = process.env.LD_LIBRARY_PATH || ''
+        const vkLdLibraryPath = `${installPath}/lib:${ldLibraryPath}`
+        core.exportVariable('LD_LIBRARY_PATH', vkLdLibraryPath)
+        core.info(`✔️ [ENV] Set env variable LD_LIBRARY_PATH -> "${vkLdLibraryPath}".`)
       }
     } else {
-      core.warning(`Could not find Vulkan SDK in ${install_path}`)
+      core.warning(`Could not find Vulkan SDK in ${installPath}`)
     }
 
-    if (platform.IS_WINDOWS && inputs.install_runtime) {
-      const runtime_path = `${install_path}\\runtime`
-      if (installer.verify_installation_of_runtime(install_path)) {
-        core.info(`✔️ [INFO] Path to Vulkan Runtime: ${runtime_path}`)
+    if (platform.IS_WINDOWS && inputs.installRuntime) {
+      const runtimePath = `${installPath}\\runtime`
+      if (installer.verifyInstallationOfRuntime(installPath)) {
+        core.info(`✔️ [INFO] Path to Vulkan Runtime: ${runtimePath}`)
       } else {
-        core.warning(`Could not find Vulkan Runtime in ${runtime_path}`)
+        core.warning(`Could not find Vulkan Runtime in ${runtimePath}`)
       }
     }
 

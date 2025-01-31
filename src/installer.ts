@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  SPDX-FileCopyrightText: 2021-2024 Jens A. Koch
+ *  SPDX-License-Identifier: MIT
+ *--------------------------------------------------------------------------------------------*/
+
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import { execSync } from 'node:child_process'
@@ -15,30 +20,30 @@ import * as platform from './platform'
  * @param {string[]} optional_components - Array of optional components to install.
  * @return {*}  {Promise<string>} - Installation path.
  */
-export async function install_vulkan_sdk(
-  sdk_path: string,
+export async function installVulkanSdk(
+  sdkPath: string,
   destination: string,
   version: string,
-  optional_components: string[]
+  optionalComponents: string[]
 ): Promise<string> {
-  let install_path = ''
+  let installPath = ''
 
   core.info(`📦 Extracting Vulkan SDK...`)
 
   if (platform.IS_MAC) {
-    install_path = await install_vulkan_sdk_mac(sdk_path, destination, optional_components)
+    installPath = await installVulkanSdkMac(sdkPath, destination, optionalComponents)
   } else if (platform.IS_LINUX) {
     // the archive extracts a "1.3.250.1" top-level dir
-    install_path = await install_vulkan_sdk_linux(sdk_path, destination, optional_components)
+    installPath = await installVulkanSdkLinux(sdkPath, destination, optionalComponents)
   } else if (platform.IS_WINDOWS) {
     // changing the destination to a versionzed folder "C:\VulkanSDK\1.3.250.1"
-    const versionized_destination_path = path.normalize(`${destination}/${version}`)
-    install_path = await install_vulkan_sdk_windows(sdk_path, versionized_destination_path, optional_components)
+    const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
+    installPath = await installVulkanSdkWindows(sdkPath, versionizedDestinationPath, optionalComponents)
   }
 
-  core.info(`   Installed into folder: ${install_path}`)
+  core.info(`   Installed into folder: ${installPath}`)
 
-  return install_path
+  return installPath
 }
 
 /**
@@ -50,14 +55,14 @@ export async function install_vulkan_sdk(
  * @param {string[]} optional_components - Array of optional components to install.
  * @return {*}  {Promise<string>} - Installation path.
  */
-export async function install_vulkan_sdk_linux(
-  sdk_path: string,
+export async function installVulkanSdkLinux(
+  sdkPath: string,
   destination: string,
-  optional_components: string[]
+  optionalComponents: string[]
 ): Promise<string> {
-  const install_path = await extract_archive(sdk_path, destination)
+  const installPath = await extractArchive(sdkPath, destination)
 
-  return install_path
+  return installPath
 }
 
 /**
@@ -69,12 +74,12 @@ export async function install_vulkan_sdk_linux(
  * @param {string[]} optional_components - Array of optional components to install.
  * @return {*}  {Promise<string>} - Installation path.
  */
-export async function install_vulkan_sdk_mac(
-  sdk_path: string,
+export async function installVulkanSdkMac(
+  sdkPath: string,
   destination: string,
-  optional_components: string[]
+  optionalComponents: string[]
 ): Promise<string> {
-  const install_path = ''
+  const installPath = ''
 
   // https://vulkan.lunarg.com/doc/view/1.2.189.0/mac/getting_started.html
   // TODO
@@ -83,9 +88,9 @@ export async function install_vulkan_sdk_mac(
   // 2. build installer cmd
   //    sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
 
-  await execSync(`hdiutil attach ${sdk_path}`) // TODO
+  await execSync(`hdiutil attach ${sdkPath}`) // TODO
 
-  return install_path
+  return installPath
 }
 
 /**
@@ -97,24 +102,24 @@ export async function install_vulkan_sdk_mac(
  * @param {string[]} optional_components - Array of optional components to install.
  * @return {*}  {Promise<string>} - Installation path.
  */
-export async function install_vulkan_sdk_windows(
-  sdk_path: string,
+export async function installVulkanSdkWindows(
+  sdkPath: string,
   destination: string,
-  optional_components: string[]
+  optionalComponents: string[]
 ): Promise<string> {
   // Warning: The installation path cannot be relative, please specify an absolute path.
   // Changing the destination to a versionzed folder "C:\VulkanSDK\1.3.250.1"
 
-  const cmd_args = [
+  const cmdArgs = [
     '--root',
     destination,
     '--accept-licenses',
     '--default-answer',
     '--confirm-command',
     'install',
-    ...optional_components
+    ...optionalComponents
   ]
-  const installer_args = cmd_args.join(' ')
+  const installerArgs = cmdArgs.join(' ')
 
   //
   // The full CLI command looks like:
@@ -130,12 +135,12 @@ export async function install_vulkan_sdk_windows(
   // Important:
   // 1. The installer must be run as administrator.
   // 2. Keep the "-Wait", because the installer process needs to finish writing all files and folders before we can proceed.
-  const run_as_admin_cmd = `powershell.exe Start-Process -FilePath '${sdk_path}' -Args '${installer_args}' -Verb RunAs -Wait`
+  const runAsAdminCmd = `powershell.exe Start-Process -FilePath '${sdkPath}' -Args '${installerArgs}' -Verb RunAs -Wait`
 
-  core.debug(`Command: ${run_as_admin_cmd}`)
+  core.debug(`Command: ${runAsAdminCmd}`)
 
   try {
-    await execSync(run_as_admin_cmd)
+    await execSync(runAsAdminCmd)
     //let stdout: string = execSync(run_as_admin_cmd, {stdio: 'inherit'}).toString().trim()
     //process.stdout.write(stdout)
   } catch (error) {
@@ -144,7 +149,7 @@ export async function install_vulkan_sdk_windows(
     } else {
       core.error('An unknown error occurred.')
     }
-    core.setFailed(`Installer failed. Arguments used: ${installer_args}`)
+    core.setFailed(`Installer failed. Arguments used: ${installerArgs}`)
   }
 
   return destination
@@ -159,11 +164,7 @@ export async function install_vulkan_sdk_windows(
  * @param {string} version
  * @return {*}  {Promise<string>}
  */
-export async function install_vulkan_runtime(
-  runtime_path: string,
-  destination: string,
-  version: string
-): Promise<string> {
+export async function installVulkanRuntime(runtimePath: string, destination: string, version: string): Promise<string> {
   /*
    Problem: extracting the zip would create a top-level folder,
    e.g.  "C:\VulkanSDK\runtime\VulkanRT-1.3.250.1-Components\".
@@ -174,17 +175,17 @@ export async function install_vulkan_runtime(
   */
   core.info(`📦 Extracting Vulkan Runtime (➔ vulkan-1.dll) ...`)
   // install into temp
-  const temp_install_path = path.normalize(`${platform.TEMP_DIR}/vulkan-runtime`) // C:\Users\RUNNER~1\AppData\Local\Temp\vulkan-runtime
-  await extract_archive(runtime_path, temp_install_path)
+  const tempInstallPath = path.normalize(`${platform.TEMP_DIR}/vulkan-runtime`) // C:\Users\RUNNER~1\AppData\Local\Temp\vulkan-runtime
+  await extractArchive(runtimePath, tempInstallPath)
   await wait(3000) // wait/block for 3sec for files to arrive. ugly hack.
   // copy from temp to destination
-  const top_level_folder = fs.readdirSync(temp_install_path)[0] // VulkanRT-1.3.250.1-Components
-  const temp_top_level_folder_path = path.join(temp_install_path, top_level_folder) // C:\Users\RUNNER~1\AppData\Local\Temp\vulkan-runtime\VulkanRT-1.3.250.1-Components
-  const install_path = path.normalize(`${destination}/${version}/runtime`) // C:\VulkanSDK\1.3.250.1\runtime
-  copy_folder(temp_top_level_folder_path, install_path)
-  fs.rmSync(temp_install_path, { recursive: true })
-  core.info(`   Installed into folder: ${install_path}`)
-  return install_path
+  const topLevelFolder = fs.readdirSync(tempInstallPath)[0] // VulkanRT-1.3.250.1-Components
+  const tempTopLevelFolderPath = path.join(tempInstallPath, topLevelFolder) // C:\Users\RUNNER~1\AppData\Local\Temp\vulkan-runtime\VulkanRT-1.3.250.1-Components
+  const installPath = path.normalize(`${destination}/${version}/runtime`) // C:\VulkanSDK\1.3.250.1\runtime
+  copyFolder(tempTopLevelFolderPath, installPath)
+  fs.rmSync(tempInstallPath, { recursive: true })
+  core.info(`   Installed into folder: ${installPath}`)
+  return installPath
 }
 
 /**
@@ -194,7 +195,7 @@ export async function install_vulkan_runtime(
  * @param {string} destination - The destination directory where the archive contents will be extracted.
  * @return {*}  {Promise<string>} A Promise that resolves to the destination directory path after extraction.
  */
-async function extract_archive(file: string, destination: string): Promise<string> {
+async function extractArchive(file: string, destination: string): Promise<string> {
   const flags: string[] = []
 
   let extract: (
@@ -241,14 +242,14 @@ async function extract_archive(file: string, destination: string): Promise<strin
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
  * @return {*}  {boolean}
  */
-export function verify_installation_of_sdk(sdk_install_path: string): boolean {
+export function verifyInstallationOfSdk(sdkInstallPath: string): boolean {
   let r = false
-  let file = `${sdk_install_path}/bin/vulkaninfo`
+  let file = `${sdkInstallPath}/bin/vulkaninfo`
   if (platform.IS_LINUX || platform.IS_MAC) {
-    file = `${sdk_install_path}/x86_64/bin/vulkaninfo`
+    file = `${sdkInstallPath}/x86_64/bin/vulkaninfo`
   }
   if (platform.IS_WINDOWS) {
-    file = path.normalize(`${sdk_install_path}/bin/vulkaninfoSDK.exe`)
+    file = path.normalize(`${sdkInstallPath}/bin/vulkaninfoSDK.exe`)
   }
   r = fs.existsSync(file)
 
@@ -271,10 +272,10 @@ export function verify_installation_of_sdk(sdk_install_path: string): boolean {
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
  * @return {*}  {boolean}
  */
-export function verify_installation_of_runtime(sdk_install_path: string): boolean {
+export function verifyInstallationOfRuntime(sdkInstallPath: string): boolean {
   let r = false
   if (platform.IS_WINDOWS) {
-    const file = `${sdk_install_path}/runtime/x64/vulkan-1.dll`
+    const file = `${sdkInstallPath}/runtime/x64/vulkan-1.dll`
     r = fs.existsSync(file)
   }
   return r
@@ -289,27 +290,27 @@ export function verify_installation_of_runtime(sdk_install_path: string): boolea
  * @export
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
  */
-export function stripdown_installation_of_sdk(sdk_install_path: string): void {
+export function stripdownInstallationOfSdk(sdkInstallPath: string): void {
   if (platform.IS_WINDOWS) {
     core.info(`✂ Reducing Vulkan SDK size before caching`)
-    let folders_to_delete: string[] = []
-    folders_to_delete = [
-      `${sdk_install_path}\\Demos`,
-      `${sdk_install_path}\\Helpers`,
-      `${sdk_install_path}\\installerResources`,
-      `${sdk_install_path}\\Licenses`,
-      `${sdk_install_path}\\Templates`
+    let foldersToDelete: string[] = []
+    foldersToDelete = [
+      `${sdkInstallPath}\\Demos`,
+      `${sdkInstallPath}\\Helpers`,
+      `${sdkInstallPath}\\installerResources`,
+      `${sdkInstallPath}\\Licenses`,
+      `${sdkInstallPath}\\Templates`
       // old installers had
       //`${sdk_install_path}\\Bin32`,
       //`${sdk_install_path}\\Tools32`,
       //`${sdk_install_path}\\Lib32`,
     ]
-    remove_folders_if_exist(folders_to_delete)
+    removeFoldersIfExist(foldersToDelete)
 
     // this deletes the files in the top-level folder
     // e.g. maintenancetool.exe, installer.dat, network.xml
     // which saves around ~25MB
-    delete_files_in_folder(sdk_install_path)
+    deleteFilesInFolder(sdkInstallPath)
   }
 }
 /**
@@ -318,7 +319,7 @@ export function stripdown_installation_of_sdk(sdk_install_path: string): void {
  * @param {string} folder - The folder to remove.
  * @return {*}  {boolean}
  */
-function remove_folder_if_exists(folder: string): boolean {
+function removeFolderIfExists(folder: string): boolean {
   try {
     if (fs.existsSync(folder)) {
       fs.rmSync(folder, { recursive: true })
@@ -338,13 +339,13 @@ function remove_folder_if_exists(folder: string): boolean {
  *
  * @param {string[]} folders - The folders to remove.
  */
-function remove_folders_if_exist(folders: string[]): void {
+function removeFoldersIfExist(folders: string[]): void {
   for (const folder of folders) {
-    remove_folder_if_exists(folder)
+    removeFolderIfExists(folder)
   }
 }
 
-function delete_files_in_folder(folder: string): void {
+function deleteFilesInFolder(folder: string): void {
   for (const file of fs.readdirSync(folder)) {
     const filePath = path.join(folder, file)
     if (fs.statSync(filePath).isDirectory()) {
@@ -363,7 +364,7 @@ function delete_files_in_folder(folder: string): void {
  * @param {string} from
  * @param {string} to
  */
-function copy_folder(from: string, to: string) {
+function copyFolder(from: string, to: string) {
   if (!fs.existsSync(to)) {
     fs.mkdirSync(to, { recursive: true })
   }
@@ -371,7 +372,7 @@ function copy_folder(from: string, to: string) {
     if (fs.lstatSync(path.join(from, element)).isFile()) {
       fs.copyFileSync(path.join(from, element), path.join(to, element))
     } else {
-      copy_folder(path.join(from, element), path.join(to, element))
+      copyFolder(path.join(from, element), path.join(to, element))
     }
   }
 }

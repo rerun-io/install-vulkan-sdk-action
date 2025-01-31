@@ -84,7 +84,8 @@
         "useConst": "error",
         "useSingleVarDeclarator": "error",
         "useTemplate": "error",
-        "useThrowOnlyError": "error"
+        "useThrowOnlyError": "error",
+        "useNamingConvention": "error"
       },
       "suspicious": {
         "noAssignInExpressions": "error",
