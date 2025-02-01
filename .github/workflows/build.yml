@@ -43,10 +43,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # https://github.com/actions/virtual-environments/blob/main/images/win/Windows2022-Readme.md
+          # https://github.com/actions/runner-images/tree/main/images
           - { OS: windows-2022 }
-          - { OS: ubuntu-22.04 }
-          #- { OS: macos-12     } disabled
+          - { OS: ubuntu-24.04 }
+          #- { OS: ubuntu-24.04-arm } disabled, because downloads not ready yet
+          #- { OS: macos-12     } disabled, because installer is still TODO
 
     steps:
 
