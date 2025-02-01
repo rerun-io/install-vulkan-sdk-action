@@ -44,7 +44,8 @@ jobs:
       matrix:
         config:
           # https://github.com/actions/runner-images/tree/main/images
-          - { OS: windows-2022 }
+          #- { OS: windows-2022 }
+          - { OS: windows-2025 }
           - { OS: ubuntu-24.04 }
           #- { OS: ubuntu-24.04-arm } disabled, because downloads not ready yet
           #- { OS: macos-12     } disabled, because installer is still TODO
