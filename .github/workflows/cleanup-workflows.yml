@@ -1,10 +1,9 @@
 #
 # .github/workflows/cleanup-workflows.yml
 #
-# Copyright 2021 Ching Chow, Jens A. Koch.
-#
-# Taken from: https://github.community/t/delete-old-workflow-results/
-# This file is part of https://github.com/ttauri-project/ttauri
+# SPDX-FileCopyrightText: 2021 Ching Chow.
+# SPDX-FileCopyrightText: 2021-2025 Jens A. Koch.
+# SPDX-License-Identifier: BSL-1.0
 
 name: "✂ Clean Workflow Runs"
 
