@@ -67,6 +67,7 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
  *
  * Warm (Windows ARM64):
  * Latest Version:  https://sdk.lunarg.com/sdk/download/latest/warm/vulkan-runtime-components.zip
+ * Normalized:      https://sdk.lunarg.com/sdk/download/1.4.304.0/warm/vulkan-runtime-components.zip
  * Versionized:     https://sdk.lunarg.com/sdk/download/1.4.304.0/warm/VulkanRT-ARM64-1.4.304.0-Installer.exe
  *
  * @export
