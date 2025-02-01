@@ -13,21 +13,40 @@ import * as platform from './platform'
 /**
  * Latest Version Response.
  *
- * @see https://vulkan.lunarg.com/sdk/versions.json
+ * @see https://vulkan.lunarg.com/sdk/latest.json
+ *
+ * Example:
+ * ```json
+ * {"linux":"1.4.304.0","mac":"1.4.304.0","warm":"1.4.304.0","windows":"1.4.304.0"}
+ * ```
  *
  * @interface LatestVersionResponse
  */
 interface LatestVersionResponse {
-  windows: string
   linux: string
   mac: string
+  warm: string
+  windows: string
 }
 
 /**
  * Get a list of all available SDK versions.
  *
+ * This is either a list of all available versions for all platforms or a list of versions for a specific platform.
+ *
  * @see https://vulkan.lunarg.com/sdk/versions.json (version list regardless of platform)
- * @see https://vulkan.lunarg.com/sdk/versions/${PLATFORM_NAME}.json
+ * @see https://vulkan.lunarg.com/sdk/versions/{platform}.json (version list for a specific platform)
+ * @see https://vulkan.lunarg.com/sdk/versions/windows.json
+ * @see https://vulkan.lunarg.com/sdk/versions/linux.json
+ * @see https://vulkan.lunarg.com/sdk/versions/mac.json
+ * @see https://vulkan.lunarg.com/sdk/versions/warm.json
+ *
+ * Example:
+ * ```json
+ * ["1.4.304.0","1.3.296.0","1.3.290.0","1.3.283.0","1.3.280.1","1.3.280.0",
+ *  "1.3.275.0","1.3.268.1","1.3.268.0","1.3.261.1","1.3.250.1","1.3.243.0",
+ *  "1.3.239.0","1.3.236.0"]
+ * ```
  *
  * @interface AvailableVersions
  */
@@ -37,6 +56,10 @@ interface AvailableVersions {
 
 /**
  * Get list of all available versions for this platform.
+ *
+ * The platform is determined by the platform module.
+ *
+ * @see AvailableVersions
  *
  * @export
  * @return {*}  {(Promise<AvailableVersions | null>)}
@@ -50,8 +73,11 @@ export const getAvailableVersions = async (): Promise<AvailableVersions | null> 
   }
   return response.result
 }
+
 /**
- * Get the list of latest versions.
+ * Get the list of latest versions for each platform.
+ *
+ * @see LatestVersionResponse
  *
  * @export
  * @return {*}  {(Promise<LatestVersionResponse | null>)}
@@ -66,7 +92,32 @@ export const getLatestVersions = async (): Promise<LatestVersionResponse | null>
 }
 
 /**
- * Resolve version
+ * Get latest version for platform.
+ * They might have a different latest versions! ¯\\_(ツ)_/¯
+ *
+ * @see LatestVersionResponse
+ *
+ * @param {LatestVersionResponse} latestVersion
+ * @return {*}  {string}
+ */
+function getLatestVersionForPlatform(latestVersion: LatestVersionResponse): string {
+  if (platform.IS_WINDOWS) {
+    return latestVersion.windows
+  }
+  if (platform.IS_WARM) {
+    return latestVersion.warm
+  }
+  if (platform.IS_LINUX) {
+    return latestVersion.linux
+  }
+  if (platform.IS_MAC) {
+    return latestVersion.mac
+  }
+  return ''
+}
+
+/**
+ * Resolve "latest" version
  *
  * This function resolves the string literal "latest" to the latest version number.
  * "latest" might be set by the user or during input validation, when the version field is empty.
@@ -96,24 +147,4 @@ export async function resolveVersion(version: string): Promise<string> {
     }
   }
   return versionToDownload
-}
-
-/**
- * Get latest version for platform.
- * They might have a different latest versions! ¯\\_(ツ)_/¯
- *
- * @param {LatestVersionResponse} latestVersion
- * @return {*}  {string}
- */
-function getLatestVersionForPlatform(latestVersion: LatestVersionResponse): string {
-  if (platform.IS_WINDOWS) {
-    return latestVersion.windows
-  }
-  if (platform.IS_LINUX) {
-    return latestVersion.linux
-  }
-  if (platform.IS_MAC) {
-    return latestVersion.mac
-  }
-  return ''
 }
