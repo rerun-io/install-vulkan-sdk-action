@@ -33,7 +33,9 @@
         "EditorConfig.EditorConfig",
         "firsttris.vscode-jest-runner",
         // biome
-        "biomejs.biome"
+        "biomejs.biome",
+        // Github Actions
+        "github.vscode-github-actions"
       ]
     },
     "settings": {
