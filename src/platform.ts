@@ -8,7 +8,7 @@ import * as os from 'node:os'
 export const HOME_DIR: string = os.homedir() // $HOME
 
 export const OS_PLATFORM: string = os.platform() // linux, mac, win32
-export const OS_ARCH: string = os.arch()
+export const OS_ARCH: string = os.arch() // x64, arm64
 
 export const IS_WINDOWS: boolean = OS_PLATFORM === 'win32'
 export const IS_LINUX: boolean = OS_PLATFORM === 'linux'
