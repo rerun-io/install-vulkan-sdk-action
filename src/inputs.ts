@@ -6,7 +6,7 @@
 import * as core from '@actions/core'
 import * as path from 'node:path'
 import * as platform from './platform'
-import * as versionGetter from './versiongetter'
+import * as versionsVulkan from './versions_vulkan'
 
 /**
  * List of available Input arguments
@@ -64,7 +64,7 @@ export async function getInputVersion(requestedVersion: string): Promise<string>
 
   // throw error, if requestedVersion is a crappy version number
   if (!requestedVersion && !validateVersion(requestedVersion)) {
-    const availableVersions = await versionGetter.getAvailableVersions()
+    const availableVersions = await versionsVulkan.getAvailableVersions()
     const versions = JSON.stringify(availableVersions, null, 2)
 
     throw new Error(

@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - moved downloader.is_downloadable() to http.isDownloadable()
 - moved downloader.compareVersionNumbers() to versions.compare()
 - applied changes according to "useNamingConvention"
+- renamed file versiongetter.ts to versions_vulkan.ts and updated symbols
+- renamed installer.ts to installer_vulkan.ts and updated symbols
 
 ## [1.0.6] - 2024-01-30
 

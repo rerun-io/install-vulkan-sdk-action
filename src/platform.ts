@@ -28,7 +28,7 @@ export function getPlatform(): string {
     // win32 => windows
     return 'windows'
   }
-  if (IS_WINDOWS && OS_ARCH === 'arm64') {
+  if (IS_WARM) {
     return 'warm'
   }
   if (IS_MAC) {
