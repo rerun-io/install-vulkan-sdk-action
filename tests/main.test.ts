@@ -2,9 +2,9 @@
 import { HttpClient } from '@actions/http-client'
 import { getPlatform } from '../src/platform'
 //import * as downloader from '../src/downloader'
-//import * as installer from '../src/installer'
+//import * as installer_vulkan from '../src/installer_vulkan'
 import * as inputs from '../src/inputs'
-import * as version_getter from '../src/versiongetter'
+import * as versionsVulkan from '../src/versions_vulkan'
 import * as path from 'path'
 import { expect, test } from '@jest/globals'
 import { env } from 'process'
@@ -71,7 +71,7 @@ describe('version', () => {
       .fn()
       .mockResolvedValue({ statusCode: 200, result: { latestVersionResponseData } })
 
-    const latestVersions = await version_getter.getLatestVersions()
+    const latestVersions = await versionsVulkan.getLatestVersions()
 
     expect(HttpClient.prototype.getJson).toHaveBeenCalledWith('https://vulkan.lunarg.com/sdk/latest.json')
     expect(latestVersions).not.toBeNull
@@ -88,7 +88,7 @@ describe('version', () => {
 
   it('Gets the download URL of the latest version.', async () => {
     const input_version = 'latest'
-    const version = await version_getter.resolve_version(input_version)
+    const version = await versionsVulkan.resolve_version(input_version)
     const latestVersion = await downloader.get_url_vulkan_sdk(version)
     expect(latestVersion).not.toBeNull
   })
