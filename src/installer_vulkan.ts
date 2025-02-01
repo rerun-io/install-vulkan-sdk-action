@@ -88,7 +88,7 @@ export async function installVulkanSdkMac(
   // 2. build installer cmd
   //    sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
 
-  await execSync(`hdiutil attach ${sdkPath}`) // TODO
+  await execSync(`hdiutil attach ${sdkPath}`)
 
   return installPath
 }
