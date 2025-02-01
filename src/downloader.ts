@@ -25,7 +25,7 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
   // Versionized:    https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanSDK-1.3.216.0-Installer.exe
   //
   // Warm (Windows ARM64):
-  // Latest Version: https://sdk.lunarg.com/sdk/download/latest/warm/ ???
+  // Latest Version: https://sdk.lunarg.com/sdk/download/latest/warm/vulkan_sdk.exe
   // Versionized:    https://sdk.lunarg.com/sdk/download/1.4.304.0/warm/InstallVulkanARM64-1.4.304.0.exe
 
   const downloadBaseUrl = `https://sdk.lunarg.com/sdk/download/${version}/${platformName}`
@@ -36,6 +36,8 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
     vulkanSdkUrl = `${downloadBaseUrl}/VulkanSDK-${version}-Installer.exe`
   }
   if (platform.IS_WARM) {
+    // well, installer naming scheme is off, compared to the other platforms
+    // at least a minus is missing here... InstallVulkan-ARM64
     vulkanSdkUrl = `${downloadBaseUrl}/InstallVulkanARM64-${version}.exe`
   }
   if (platform.IS_LINUX) {
@@ -57,18 +59,23 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
 }
 
 /**
- * Get download url for Vulkan Runtime.
+ * Get download URL for Vulkan Runtime.
  *
  * Windows:
  * Latest Version:  https://sdk.lunarg.com/sdk/download/latest/windows/vulkan-runtime-components.zip
  * Versionized:     https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanRT-1.3.216.0-Components.zip
+ *
+ * Warm (Windows ARM64):
+ * Latest Version:  https://sdk.lunarg.com/sdk/download/latest/warm/vulkan-runtime-components.zip
+ * Versionized:     https://sdk.lunarg.com/sdk/download/1.4.304.0/warm/VulkanRT-ARM64-1.4.304.0-Installer.exe
  *
  * @export
  * @param {string} version - The runtime version to download.
  * @return {*}  {Promise<string>} Returns the download url.
  */
 export async function getUrlVulkanRuntime(version: string): Promise<string> {
-  const vulkanRuntimeUrl = `https://sdk.lunarg.com/sdk/download/${version}/windows/vulkan-runtime-components.zip`
+  const Platform = platform.getPlatform()
+  const vulkanRuntimeUrl = `https://sdk.lunarg.com/sdk/download/${version}/${Platform}/vulkan-runtime-components.zip`
   await http.isDownloadable('VULKAN_RUNTIME', version, vulkanRuntimeUrl)
   return vulkanRuntimeUrl
 }
@@ -115,7 +122,7 @@ export async function downloadVulkanRuntime(version: string): Promise<string> {
  * @return {*}  {string} Platform-based name for the Vulkan SDK archive or installer.
  */
 export function getVulkanSdkFilename(version: string): string {
-  if (platform.IS_WINDOWS) {
+  if (platform.IS_WINDOWS || platform.IS_WARM) {
     return `VulkanSDK-Installer.exe`
   }
   if (platform.IS_LINUX) {

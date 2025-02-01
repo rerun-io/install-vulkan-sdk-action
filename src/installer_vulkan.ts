@@ -35,7 +35,7 @@ export async function installVulkanSdk(
   } else if (platform.IS_LINUX) {
     // the archive extracts a "1.3.250.1" top-level dir
     installPath = await installVulkanSdkLinux(sdkPath, destination, optionalComponents)
-  } else if (platform.IS_WINDOWS) {
+  } else if (platform.IS_WINDOWS || platform.IS_WARM) {
     // changing the destination to a versionzed folder "C:\VulkanSDK\1.3.250.1"
     const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
     installPath = await installVulkanSdkWindows(sdkPath, versionizedDestinationPath, optionalComponents)
@@ -207,7 +207,7 @@ async function extractArchive(file: string, destination: string): Promise<string
     throw new Error('Extraction function is not properly assigned.')
   }
 
-  if (platform.IS_WINDOWS) {
+  if (platform.IS_WINDOWS || platform.IS_WARM) {
     if (file.endsWith('.exe')) {
       // No extraction needed for .exe files
       return destination
@@ -248,7 +248,7 @@ export function verifyInstallationOfSdk(sdkInstallPath: string): boolean {
   if (platform.IS_LINUX || platform.IS_MAC) {
     file = `${sdkInstallPath}/x86_64/bin/vulkaninfo`
   }
-  if (platform.IS_WINDOWS) {
+  if (platform.IS_WINDOWS || platform.IS_WARM) {
     file = path.normalize(`${sdkInstallPath}/bin/vulkaninfoSDK.exe`)
   }
   r = fs.existsSync(file)
@@ -274,7 +274,7 @@ export function verifyInstallationOfSdk(sdkInstallPath: string): boolean {
  */
 export function verifyInstallationOfRuntime(sdkInstallPath: string): boolean {
   let r = false
-  if (platform.IS_WINDOWS) {
+  if (platform.IS_WINDOWS || platform.IS_WARM) {
     const file = `${sdkInstallPath}/runtime/x64/vulkan-1.dll`
     r = fs.existsSync(file)
   }
@@ -291,7 +291,7 @@ export function verifyInstallationOfRuntime(sdkInstallPath: string): boolean {
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
  */
 export function stripdownInstallationOfSdk(sdkInstallPath: string): void {
-  if (platform.IS_WINDOWS) {
+  if (platform.IS_WINDOWS || platform.IS_WARM) {
     core.info(`✂ Reducing Vulkan SDK size before caching`)
     let foldersToDelete: string[] = []
     foldersToDelete = [

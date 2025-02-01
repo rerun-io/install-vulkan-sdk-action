@@ -99,7 +99,7 @@ export function validateVersion(version: string): boolean {
 export function getInputDestination(destination: string): string {
   // return default install locations for platform
   if (!destination || destination === '') {
-    if (platform.IS_WINDOWS) {
+    if (platform.IS_WINDOWS || platform.IS_WARM) {
       destination = `C:\\VulkanSDK\\`
     }
     // The .tar.gz file extracts the SDK into a versionized directory of the form 1.x.y.z.
