@@ -103,7 +103,7 @@ export async function installVulkanSdkMacDmg(
   core.debug(`Output: ${lsOutput}`)
 
   // The full CLI command looks like:
-  // sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
+  // sudo /InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
   const cmdArgs = [
     '--root',
     destination,
@@ -115,7 +115,7 @@ export async function installVulkanSdkMacDmg(
   ]
   const installerArgs = cmdArgs.join(' ')
 
-  const runAsAdminCmd = `sudo ./Volumes/vulkan-sdk/InstallVulkan.app/Contents/MacOS/InstallVulkan ${installerArgs}`
+  const runAsAdminCmd = `sudo /Volumes/vulkan-sdk/InstallVulkan.app/Contents/MacOS/InstallVulkan ${installerArgs}`
 
   core.debug(`Command: ${runAsAdminCmd}`)
 
