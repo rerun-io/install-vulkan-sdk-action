@@ -68,6 +68,8 @@ export async function installVulkanSdkLinux(
 /**
  * Install the Vulkan SDK on a MAC system.
  *
+ * https://vulkan.lunarg.com/doc/sdk/1.4.304.0/mac/getting_started.html
+ *
  * @export
  * @param {string} sdk_path - Path to the Vulkan SDK installer executable.
  * @param {string} destination - Installation destination path.
@@ -79,18 +81,40 @@ export async function installVulkanSdkMac(
   destination: string,
   optionalComponents: string[]
 ): Promise<string> {
-  const installPath = ''
+  // extract the archive to /tmp
+  await extractArchive(sdkPath, '/tmp')
 
-  // https://vulkan.lunarg.com/doc/view/1.2.189.0/mac/getting_started.html
-  // TODO
-  // 1. mount dmg
-  //    local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep -i vulkansdk | awk 'END {print $NF}')
-  // 2. build installer cmd
-  //    sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
+  // The full CLI command looks like:
+  // sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
+  const cmdArgs = [
+    '--root',
+    destination,
+    '--accept-licenses',
+    '--default-answer',
+    '--confirm-command',
+    'install',
+    ...optionalComponents
+  ]
+  const installerArgs = cmdArgs.join(' ')
 
-  await execSync(`hdiutil attach ${sdkPath}`)
+  const runAsAdminCmd = `sudo ./tmp/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
 
-  return installPath
+  core.debug(`Command: ${runAsAdminCmd}`)
+
+  try {
+    await execSync(runAsAdminCmd)
+    //let stdout: string = execSync(run_as_admin_cmd, {stdio: 'inherit'}).toString().trim()
+    //process.stdout.write(stdout)
+  } catch (error) {
+    if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('An unknown error occurred.')
+    }
+    core.setFailed(`Installer failed. Arguments used: ${installerArgs}`)
+  }
+
+  return destination
 }
 
 /**
