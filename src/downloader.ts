@@ -138,13 +138,17 @@ export function getVulkanSdkFilename(version: string): string {
   if (platform.IS_LINUX) {
     // For versions up to 1.3.250.1 the ending is ".tar.gz".
     // For versions after 1.3.250.1 the ending is ".tar.xz".
-    let filename = `vulkansdk-linux-x86_64.tar.gz`
     if (1 === versions.compare(version, '1.3.250.1')) {
-      filename = `vulkansdk-linux-x86_64.tar.xz`
+      return `vulkansdk-linux-x86_64.tar.xz`
     }
-    return filename
+    return `vulkansdk-linux-x86_64.tar.gz`
   }
   if (platform.IS_MAC) {
+    // For versions up to 1.3.290.0 the ending is ".dmg".
+    // For versions after 1.3.290.0 the ending is ".zip".
+    if (1 === versions.compare(version, '1.3.290.0')) {
+      return `vulkansdk-macos.zip`
+    }
     return `vulkansdk-macos.dmg`
   }
   return 'not-implemented-for-platform'
