@@ -35,11 +35,13 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
   if (platform.IS_WINDOWS) {
     vulkanSdkUrl = `${downloadBaseUrl}/VulkanSDK-${version}-Installer.exe`
   }
+
   if (platform.IS_WARM) {
     // well, installer naming scheme is off, compared to the other platforms
     // at least a minus is missing here... InstallVulkan-ARM64
     vulkanSdkUrl = `${downloadBaseUrl}/InstallVulkanARM64-${version}.exe`
   }
+
   if (platform.IS_LINUX) {
     // For versions up to 1.3.250.1 the ending is ".tar.gz".
     // For versions after 1.3.250.1 the ending is ".tar.xz".
@@ -49,8 +51,15 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
     }
     vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-linux-x86_64-${version}.${extension}`
   }
+
   if (platform.IS_MAC) {
-    vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-macos-${version}.dmg`
+    // For versions up to 1.3.290.0 the ending is ".dmg".
+    // For versios after 1.3.290.0 the ending is ".zip".
+    let extension = 'dmg'
+    if (1 === versions.compare(version, '1.3.290.0')) {
+      extension = 'zip'
+    }
+    vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-macos-${version}.${extension}`
   }
 
   await http.isDownloadable('VULKAN_SDK', version, vulkanSdkUrl)

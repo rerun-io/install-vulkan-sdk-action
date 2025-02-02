@@ -31,7 +31,14 @@ export async function installVulkanSdk(
   core.info(`📦 Extracting Vulkan SDK...`)
 
   if (platform.IS_MAC) {
-    installPath = await installVulkanSdkMac(sdkPath, destination, optionalComponents)
+    // handle version dependend installation procedure change (dmg/zip)
+    if (version <= '1.3.290.0') {
+      // the sdk is a .dmg
+      installPath = await installVulkanSdkMacDmg(sdkPath, destination, optionalComponents)
+    } else {
+      // the sdk is a .zip
+      installPath = await installVulkanSdkMacZip(sdkPath, destination, optionalComponents)
+    }
   } else if (platform.IS_LINUX) {
     // the archive extracts a "1.3.250.1" top-level dir
     installPath = await installVulkanSdkLinux(sdkPath, destination, optionalComponents)
@@ -66,9 +73,12 @@ export async function installVulkanSdkLinux(
 }
 
 /**
- * Install the Vulkan SDK on a MAC system.
+ * Install the Vulkan SDK on a MAC system (dmg).
  *
  * https://vulkan.lunarg.com/doc/sdk/1.4.304.0/mac/getting_started.html
+ *
+ * vulkan sdk was packaged as a .dmg (disk image) up to version 1.3.290.0.
+ * vulkan sdk is packaged as a .zip since version 1.3.296.0.
  *
  * @export
  * @param {string} sdk_path - Path to the Vulkan SDK installer executable.
@@ -76,13 +86,53 @@ export async function installVulkanSdkLinux(
  * @param {string[]} optional_components - Array of optional components to install.
  * @return {*}  {Promise<string>} - Installation path.
  */
-export async function installVulkanSdkMac(
+export async function installVulkanSdkMacDmg(
   sdkPath: string,
   destination: string,
   optionalComponents: string[]
 ): Promise<string> {
-  // extract the archive to /tmp
-  await extractArchive(sdkPath, '/tmp')
+
+  // mount the dmg (disk image)
+  const mountCmd = `hdiutil attach ${sdkPath}`
+  core.debug(`Command: ${mountCmd}`)
+
+  try {
+    await execSync(mountCmd)
+  } catch (error) {
+    if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('An unknown error occurred.')
+    }
+    core.setFailed(`Mounting the disk image failed.`)
+  }
+
+  // find the mounted volume
+  const volumes = fs.readdirSync('/Volumes')
+  let mountedVolume = ''
+  for (const volume of volumes) {
+    if (volume.includes('VulkanSDK')) {
+      mountedVolume = volume
+      break
+    }
+  }
+  if (mountedVolume === '') {
+    core.setFailed('Could not find the mounted volume.')
+  }
+
+  // copy the contents of the mounted volume to TEMP_DIR
+  const copyCmd = `cp -R /Volumes/${mountedVolume}/* '${platform.TEMP_DIR}'`
+  core.debug(`Command: ${copyCmd}`)
+  try {
+    await execSync(copyCmd)
+  } catch (error) {
+    if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('An unknown error occurred.')
+    }
+    core.setFailed(`Copying the contents of the mounted volume to '${platform.TEMP_DIR}' failed.`)
+  }
 
   // The full CLI command looks like:
   // sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
@@ -97,7 +147,64 @@ export async function installVulkanSdkMac(
   ]
   const installerArgs = cmdArgs.join(' ')
 
-  const runAsAdminCmd = `sudo ./tmp/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
+  const runAsAdminCmd = `sudo ./'${platform.TEMP_DIR}'/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
+
+  core.debug(`Command: ${runAsAdminCmd}`)
+
+  try {
+    await execSync(runAsAdminCmd)
+    //let stdout: string = execSync(run_as_admin_cmd, {stdio: 'inherit'}).toString().trim()
+    //process.stdout.write(stdout)
+  } catch (error) {
+    if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('An unknown error occurred.')
+    }
+    core.setFailed(`Installer failed. Arguments used: ${installerArgs}`)
+  }
+
+  return destination
+}
+
+/**
+ * Install the Vulkan SDK on a MAC system (zip).
+ *
+ * https://vulkan.lunarg.com/doc/sdk/1.4.304.0/mac/getting_started.html
+ *
+ * vulkan sdk was packaged as a .dmg (disk image) up to version 1.3.290.0.
+ * vulkan sdk is packaged as a .zip since version 1.3.296.0.
+ *
+ * @export
+ * @param {string} sdk_path - Path to the Vulkan SDK installer executable.
+ * @param {string} destination - Installation destination path.
+ * @param {string[]} optional_components - Array of optional components to install.
+ * @return {*}  {Promise<string>} - Installation path.
+ */
+export async function installVulkanSdkMacZip(
+  sdkPath: string,
+  destination: string,
+  optionalComponents: string[]
+): Promise<string> {
+
+  // vulkan sdk is packaged as a .zip since version 1.3.296.0
+  // extract the zip archive to /tmp
+  await extractArchive(sdkPath, platform.TEMP_DIR)
+
+  // The full CLI command looks like:
+  // sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
+  const cmdArgs = [
+    '--root',
+    destination,
+    '--accept-licenses',
+    '--default-answer',
+    '--confirm-command',
+    'install',
+    ...optionalComponents
+  ]
+  const installerArgs = cmdArgs.join(' ')
+
+  const runAsAdminCmd = `sudo ./'${platform.TEMP_DIR}'/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
 
   core.debug(`Command: ${runAsAdminCmd}`)
 
