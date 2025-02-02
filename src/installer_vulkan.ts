@@ -94,21 +94,13 @@ export async function installVulkanSdkMacDmg(
   optionalComponents: string[]
 ): Promise<string> {
   // mount the dmg (disk image)
-  // -mountpoint /Volumes/vulkan-sdk
-  const mountCmd = `hdiutil attach ${sdkPath}`
+  const mountCmd = `hdiutil attach ${sdkPath} -mountpoint /Volumes/vulkan-sdk`
   core.debug(`Command: ${mountCmd}`)
+  const mountOutput = await execSync(mountCmd)
+  core.debug(`Output: ${mountOutput}`)
 
-  try {
-    const stdout: string = await execSync(mountCmd, { stdio: 'inherit' }).toString().trim()
-    process.stdout.write(stdout)
-  } catch (error) {
-    if (error instanceof Error) {
-      core.error(error.message)
-    } else {
-      core.error('An unknown error occurred.')
-    }
-    core.setFailed(`Mounting the disk image failed.`)
-  }
+  const lsOutput = await execSync(`ls -la /Volumes/vulkan-sdk`)
+  core.debug(`Output: ${lsOutput}`)
 
   // The full CLI command looks like:
   // sudo ./InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
@@ -141,7 +133,7 @@ export async function installVulkanSdkMacDmg(
   }
 
   // unmount the disk image on CI?
-  //hdiutil detach -force /Volumes/vulkan-sdk
+  await execSync(`hdiutil detach -force /Volumes/vulkan-sdk`)
 
   return destination
 }
