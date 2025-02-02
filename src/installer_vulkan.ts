@@ -96,7 +96,8 @@ export async function installVulkanSdkMacDmg(
   core.debug(`Command: ${mountCmd}`)
 
   try {
-    await execSync(mountCmd)
+    const stdout: string = await execSync(mountCmd, { stdio: 'inherit' }).toString().trim()
+    process.stdout.write(stdout)
   } catch (error) {
     if (error instanceof Error) {
       core.error(error.message)
