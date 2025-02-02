@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - "It was a bright day in April, and the clocks were striking thirteen." - 1984
 
+### Added
+- install the Windows ARM64 SDK and RT, [#487](https://github.com/jakoch/install-vulkan-sdk-action/issues/487)
+- install Vulkan SDK for MAC, [#293](https://github.com/jakoch/install-vulkan-sdk-action/issues/293)
+
 ### Changed
 - moved downloader.is_downloadable() to http.isDownloadable()
 - moved downloader.compareVersionNumbers() to versions.compare()
@@ -26,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - updated devcontainer incl. Dockerfile
-- renamed __tests__ Folder to tests
+- renamed __tests__ folder to tests
 - removed eslint and prettier
 - fixed linter and formatting issues found by biome
 
