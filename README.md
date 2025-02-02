@@ -9,7 +9,7 @@ A Github Action to install the Vulkan SDK and it's runtime.
 - The SDK version number is automatically fetched via the Web API, if not set to a fixed version number manually (latest).
 - The installation of optional SDK components is supported.
 - The size of the installed SDK is reduced to achieve a smaller cache package size (only on Windows).
-- The installer supports Windows, Linux, Mac an runners on GHA CI.
+- The installer supports Windows, Linux, Mac runners.
 
 ---
 

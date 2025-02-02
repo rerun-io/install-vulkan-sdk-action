@@ -94,12 +94,14 @@ export async function installVulkanSdkMacDmg(
 ): Promise<string> {
   // mount the dmg (disk image)
   const mountCmd = `hdiutil attach ${sdkPath} -mountpoint /Volumes/vulkan-sdk`
-  core.debug(`Command: ${mountCmd}`)
-  const mountOutput = await execSync(mountCmd)
-  core.debug(`Output: ${mountOutput}`)
+  await execSync(mountCmd)
 
-  const lsOutput = await execSync(`ls -la /Volumes/vulkan-sdk`)
-  core.debug(`Output: ${lsOutput}`)
+  //core.debug(`Command: ${mountCmd}`)
+  //const mountOutput = await execSync(mountCmd)
+  //core.debug(`Output: ${mountOutput}`)
+
+  //const lsOutput = await execSync(`ls -la /Volumes/vulkan-sdk`)
+  //core.debug(`Output: ${lsOutput}`)
 
   // The full CLI command looks like:
   // sudo /InstallVulkan.app/Contents/MacOS/InstallVulkan --root "installation path" --accept-licenses --default-answer --confirm-command install
