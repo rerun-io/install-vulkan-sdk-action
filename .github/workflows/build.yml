@@ -104,3 +104,13 @@ jobs:
           Get-ChildItem -File -Recurse
           $folderSizeMB = (Get-ChildItem -File -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
           "Folder size: {0:N2} MB" -f $folderSizeMB
+
+      - name: Show Env Vars and SDK folder (MAC)
+        if: contains(matrix.config.OS, 'mac')
+        run: |
+          echo PATH = $PATH
+          echo VULKAN_VERSION = $VULKAN_VERSION
+          echo VULKAN_SDK = $VULKAN_SDK
+          echo VK_LAYER_PATH = $VK_LAYER_PATH
+          echo DYLD_LIBRARY_PATH = $DYLD_LIBRARY_PATH
+          echo Folder size = `du -hs $VULKAN_SDK`
