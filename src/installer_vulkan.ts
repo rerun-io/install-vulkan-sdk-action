@@ -92,7 +92,7 @@ export async function installVulkanSdkMacDmg(
   optionalComponents: string[]
 ): Promise<string> {
   // mount the dmg (disk image)
-  const mountCmd = `sudo hdiutil attach -verbose ${sdkPath}`
+  const mountCmd = `sudo hdiutil attach -verbose ${sdkPath} -mountpoint /Volumes/vulkansdk`
   core.debug(`Command: ${mountCmd}`)
 
   try {
@@ -105,33 +105,6 @@ export async function installVulkanSdkMacDmg(
       core.error('An unknown error occurred.')
     }
     core.setFailed(`Mounting the disk image failed.`)
-  }
-
-  // find the mounted volume
-  const volumes = fs.readdirSync('/Volumes')
-  let mountedVolume = ''
-  for (const volume of volumes) {
-    if (volume.includes('vulkansdk')) {
-      mountedVolume = volume
-      break
-    }
-  }
-  if (mountedVolume === '') {
-    core.setFailed('Could not find the mounted volume.')
-  }
-
-  // copy the contents of the mounted volume to TEMP_DIR
-  const copyCmd = `cp -R /Volumes/${mountedVolume}/* '${platform.TEMP_DIR}'`
-  core.debug(`Command: ${copyCmd}`)
-  try {
-    await execSync(copyCmd)
-  } catch (error) {
-    if (error instanceof Error) {
-      core.error(error.message)
-    } else {
-      core.error('An unknown error occurred.')
-    }
-    core.setFailed(`Copying the contents of the mounted volume to '${platform.TEMP_DIR}' failed.`)
   }
 
   // The full CLI command looks like:
@@ -147,7 +120,7 @@ export async function installVulkanSdkMacDmg(
   ]
   const installerArgs = cmdArgs.join(' ')
 
-  const runAsAdminCmd = `sudo ./${platform.TEMP_DIR}/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
+  const runAsAdminCmd = `sudo ./Volumes/vulkansdk/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
 
   core.debug(`Command: ${runAsAdminCmd}`)
 
