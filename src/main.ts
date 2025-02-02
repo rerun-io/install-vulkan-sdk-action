@@ -169,11 +169,11 @@ async function run(): Promise<void> {
         // export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
         const ldLibraryPath = process.env.LD_LIBRARY_PATH || ''
         const vkLdLibraryPath = `${installPath}/lib:${ldLibraryPath}`
-        if(platform.IS_LINUX) {
+        if (platform.IS_LINUX) {
           core.exportVariable('LD_LIBRARY_PATH', vkLdLibraryPath)
           core.info(`✔️ [ENV] Set env variable LD_LIBRARY_PATH -> "${vkLdLibraryPath}".`)
         }
-        if(platform.IS_MAC) {
+        if (platform.IS_MAC) {
           core.exportVariable('DYLD_LIBRARY_PATH', vkLdLibraryPath)
           core.info(`✔️ [ENV] Set env variable DYLD_LIBRARY_PATH -> "${vkLdLibraryPath}".`)
         }

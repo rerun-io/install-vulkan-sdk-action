@@ -91,7 +91,6 @@ export async function installVulkanSdkMacDmg(
   destination: string,
   optionalComponents: string[]
 ): Promise<string> {
-
   // mount the dmg (disk image)
   const mountCmd = `hdiutil attach ${sdkPath}`
   core.debug(`Command: ${mountCmd}`)
@@ -186,7 +185,6 @@ export async function installVulkanSdkMacZip(
   destination: string,
   optionalComponents: string[]
 ): Promise<string> {
-
   // vulkan sdk is packaged as a .zip since version 1.3.296.0
   // extract the zip archive to /tmp
   await extractArchive(sdkPath, platform.TEMP_DIR)
