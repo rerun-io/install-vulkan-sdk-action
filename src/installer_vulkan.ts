@@ -358,11 +358,14 @@ async function extractArchive(file: string, destination: string): Promise<string
 export function verifyInstallationOfSdk(sdkInstallPath: string): boolean {
   let r = false
   let file = `${sdkInstallPath}/bin/vulkaninfo`
-  if (platform.IS_LINUX || platform.IS_MAC) {
+  if (platform.IS_LINUX) {
     file = `${sdkInstallPath}/x86_64/bin/vulkaninfo`
   }
   if (platform.IS_WINDOWS || platform.IS_WARM) {
     file = path.normalize(`${sdkInstallPath}/bin/vulkaninfoSDK.exe`)
+  }
+  if (platform.IS_MAC) {
+    file = `${sdkInstallPath}/macOS/bin/vulkaninfo`
   }
   r = fs.existsSync(file)
 
