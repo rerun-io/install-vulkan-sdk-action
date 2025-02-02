@@ -160,7 +160,7 @@ async function run(): Promise<void> {
       core.exportVariable('VULKAN_VERSION', version)
       core.info(`✔️ [ENV] Set env variable VULKAN_VERSION -> "${version}".`)
 
-      if (platform.IS_LINUX) {
+      if (platform.IS_LINUX || platform.IS_MAC) {
         // export VK_LAYER_PATH=$VULKAN_SDK/etc/vulkan/explicit_layer.d
         const vkLayerPath = `${installPath}/etc/vulkan/explicit_layer.d`
         core.exportVariable('VK_LAYER_PATH', vkLayerPath)
@@ -169,8 +169,14 @@ async function run(): Promise<void> {
         // export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
         const ldLibraryPath = process.env.LD_LIBRARY_PATH || ''
         const vkLdLibraryPath = `${installPath}/lib:${ldLibraryPath}`
-        core.exportVariable('LD_LIBRARY_PATH', vkLdLibraryPath)
-        core.info(`✔️ [ENV] Set env variable LD_LIBRARY_PATH -> "${vkLdLibraryPath}".`)
+        if(platform.IS_LINUX) {
+          core.exportVariable('LD_LIBRARY_PATH', vkLdLibraryPath)
+          core.info(`✔️ [ENV] Set env variable LD_LIBRARY_PATH -> "${vkLdLibraryPath}".`)
+        }
+        if(platform.IS_MAC) {
+          core.exportVariable('DYLD_LIBRARY_PATH', vkLdLibraryPath)
+          core.info(`✔️ [ENV] Set env variable DYLD_LIBRARY_PATH -> "${vkLdLibraryPath}".`)
+        }
       }
     } else {
       core.warning(`Could not find Vulkan SDK in ${installPath}`)
