@@ -48,7 +48,6 @@ jobs:
           - { OS: windows-2025 }
           - { OS: ubuntu-24.04 }
           #- { OS: ubuntu-24.04-arm } disabled, because downloads not ready yet
-          - { OS: macos-14     }
           - { OS: macos-15     }
           #- { OS: macos-15-arm }
 
@@ -116,7 +115,6 @@ jobs:
           - { OS: windows-2025 }
           - { OS: ubuntu-24.04 }
           #- { OS: ubuntu-24.04-arm } disabled, because downloads not ready yet
-          - { OS: macos-14     }
           - { OS: macos-15     }
           #- { OS: macos-15-arm }
 
