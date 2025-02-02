@@ -92,7 +92,7 @@ export async function installVulkanSdkMacDmg(
   optionalComponents: string[]
 ): Promise<string> {
   // mount the dmg (disk image)
-  const mountCmd = `hdiutil attach ${sdkPath}`
+  const mountCmd = `sudo hdiutil attach -verbose ${sdkPath}`
   core.debug(`Command: ${mountCmd}`)
 
   try {
@@ -110,7 +110,7 @@ export async function installVulkanSdkMacDmg(
   const volumes = fs.readdirSync('/Volumes')
   let mountedVolume = ''
   for (const volume of volumes) {
-    if (volume.includes('VulkanSDK')) {
+    if (volume.includes('vulkansdk')) {
       mountedVolume = volume
       break
     }
@@ -146,7 +146,7 @@ export async function installVulkanSdkMacDmg(
   ]
   const installerArgs = cmdArgs.join(' ')
 
-  const runAsAdminCmd = `sudo ./'${platform.TEMP_DIR}'/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
+  const runAsAdminCmd = `sudo ./${platform.TEMP_DIR}/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
 
   core.debug(`Command: ${runAsAdminCmd}`)
 
