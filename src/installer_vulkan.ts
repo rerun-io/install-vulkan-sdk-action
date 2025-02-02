@@ -94,7 +94,8 @@ export async function installVulkanSdkMacDmg(
   optionalComponents: string[]
 ): Promise<string> {
   // mount the dmg (disk image)
-  const mountCmd = `hdiutil attach ${sdkPath} -mountpoint /Volumes/vulkan-sdk`
+  // -mountpoint /Volumes/vulkan-sdk
+  const mountCmd = `hdiutil attach ${sdkPath}`
   core.debug(`Command: ${mountCmd}`)
 
   try {
