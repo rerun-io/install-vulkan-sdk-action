@@ -36,7 +36,8 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-    name: Install latest SDK on ${{ matrix.config.OS }}
+    # install latest version sdk on all platforms
+    name: Install latest - ${{ matrix.config.OS }}
     runs-on: ${{ matrix.config.OS }}
 
     strategy:
@@ -103,7 +104,8 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-    name: Install old SDK on ${{ matrix.config.OS }}
+    # install old version sdk on all platforms
+    name: Install old - ${{ matrix.config.OS }}
     runs-on: ${{ matrix.config.OS }}
 
     strategy:
