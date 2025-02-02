@@ -349,7 +349,34 @@ async function extractArchive(file: string, destination: string): Promise<string
 }
 
 /**
+ * Get the path to the "vulkaninfo" executable.
+ * The path is platform dependent.
+ *
+ * On Windows, the path is "C:\VulkanSDK\bin\vulkaninfoSDK.exe"
+ * On Linux, the path is "/usr/vulkan-sdk/1.2.3.4/bin/vulkaninfo"
+ * On MacOS, the path is "/usr/vulkan-sdk/1.2.3.4/macOS/bin/vulkaninfo"
+ *
+ * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.2.3.4"
+ * @return {*}  {string}
+ * @export
+ */
+export function getVulkanInfoPath(sdkInstallPath: string): string {
+  if (platform.IS_LINUX) {
+    return path.join(sdkInstallPath, 'x86_64/bin/vulkaninfo')
+  }
+  if (platform.IS_WINDOWS || platform.IS_WARM) {
+    return path.join(sdkInstallPath, 'bin/vulkaninfoSDK.exe')
+  }
+  if (platform.IS_MAC) {
+    return path.join(sdkInstallPath, 'macOS/bin/vulkaninfo')
+  }
+  return path.join(sdkInstallPath, 'bin/vulkaninfo')
+}
+
+/**
  * Verify the installation of the SDK.
+ *
+ * The verification is done by checking the existence of the "vulkaninfo" executable.
  *
  * @export
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
@@ -357,28 +384,37 @@ async function extractArchive(file: string, destination: string): Promise<string
  */
 export function verifyInstallationOfSdk(sdkInstallPath: string): boolean {
   let r = false
-  let file = `${sdkInstallPath}/bin/vulkaninfo`
-  if (platform.IS_LINUX) {
-    file = `${sdkInstallPath}/x86_64/bin/vulkaninfo`
-  }
-  if (platform.IS_WINDOWS || platform.IS_WARM) {
-    file = path.normalize(`${sdkInstallPath}/bin/vulkaninfoSDK.exe`)
-  }
-  if (platform.IS_MAC) {
-    file = `${sdkInstallPath}/macOS/bin/vulkaninfo`
-  }
+  const file = getVulkanInfoPath(sdkInstallPath)
   r = fs.existsSync(file)
-
-  // If the "vulkaninfo" tool exists, execute "vulkaninfo --summary".
-  // Wrap the output of the summary in a collapsible section in the workflow logs.
-  /*if (r) {
-    core.startGroup(`Vulkan Info Summary`)
-    const run_vulkaninfo = `${file} --summary`
-    execSync(run_vulkaninfo)
-    core.endGroup()
-  }*/
-
   return r
+}
+
+/**
+ * Run the vulkaninfo command.
+ *
+ * Runs the "vulkaninfo --summary" command, if it exists.
+ * and log the output in a collapsible section in the workflow logs.
+ *
+ * @param {string} vulkanInfoPath - The path to the "vulkaninfo" executable.
+ */
+export function runVulkanInfo(vulkanInfoPath: string): void {
+  if (fs.existsSync(vulkanInfoPath)) {
+    core.startGroup(`Vulkan Info Summary`)
+    const runVulkanInfoCmd = `${vulkanInfoPath} --summary`
+    try {
+      const stdout: string = execSync(runVulkanInfoCmd).toString().trim()
+      process.stdout.write(stdout)
+    } catch (error) {
+      if (error instanceof Error) {
+        core.error(error.message)
+      } else {
+        core.error('An unknown error occurred while running vulkaninfo.')
+      }
+    }
+    core.endGroup()
+  } else {
+    core.warning(`vulkaninfo executable not found at path: ${vulkanInfoPath}`)
+  }
 }
 
 /**
