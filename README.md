@@ -9,7 +9,7 @@ A Github Action to install the Vulkan SDK and it's runtime.
 - The SDK version number is automatically fetched via the Web API, if not set to a fixed version number manually (latest).
 - The installation of optional SDK components is supported.
 - The size of the installed SDK is reduced to achieve a smaller cache package size (only on Windows).
-- The installation on MacOS is on our [todo list](https://github.com/jakoch/install-vulkan-sdk-action/issues/293).
+- The installer supports Windows, Linux, Mac an runners on GHA CI.
 
 ---
 
@@ -91,12 +91,13 @@ The following output variables are available:
 
 The following environment variables are set:
 
-| Name              | Type    |  Description                                   |
-|-------------------|---------|------------------------------------------------|
-| `VULKAN_VERSION`  | String  | The installed Vulkan SDK version.              |
-| `VULKAN_SDK`      | String  | The location of your Vulkan SDK files          |
-| `VK_LAYER_PATH`   | String  | Linux only: The location of /etc/vulkan/explicit_layer.d  |
-| `LD_LIBRARY_PATH` | String  | Linux only: path to vulkan library  |
+| Name                | Type    |  Description                                   |
+|---------------------|---------|------------------------------------------------|
+| `VULKAN_VERSION`    | String  | The installed Vulkan SDK version.              |
+| `VULKAN_SDK`        | String  | The location of your Vulkan SDK files          |
+| `VK_LAYER_PATH`     | String  | Linux only: The location of /etc/vulkan/explicit_layer.d  |
+| `LD_LIBRARY_PATH`   | String  | Linux only: path to vulkan library  |
+| `DYLD_LIBRARY_PATH` | String  | Mac only: path to vulkan library  |
 
 ## License
 
