@@ -179,7 +179,7 @@ export async function installVulkanSdkMacZip(
   ]
   const installerArgs = cmdArgs.join(' ')
 
-  const runAsAdminCmd = `sudo ./'${platform.TEMP_DIR}'/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
+  const runAsAdminCmd = `sudo ./${platform.TEMP_DIR}/InstallVulkan.app/Contents/MacOS/InstallVulkan '${installerArgs}'`
 
   core.debug(`Command: ${runAsAdminCmd}`)
 
