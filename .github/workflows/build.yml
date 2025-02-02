@@ -32,11 +32,78 @@ jobs:
 
 # ---------------------------------------------------------------------------------------
 
-  test: # makes sure the action works on a clean machine without building (user case)
+  test-latest-version: # makes sure the action works on a clean machine without building (user case)
 
 # ---------------------------------------------------------------------------------------
 
-    name: Build on ${{ matrix.config.OS }}
+    name: Install latest SDK version on ${{ matrix.config.OS }}
+    runs-on: ${{ matrix.config.OS }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # https://github.com/actions/runner-images/tree/main/images
+          - { OS: windows-2025 }
+          - { OS: ubuntu-24.04 }
+          #- { OS: ubuntu-24.04-arm } disabled, because downloads not ready yet
+          - { OS: macos-14     }
+          - { OS: macos-15     }
+          #- { OS: macos-15-arm }
+
+    steps:
+
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
+
+      - name: Use own action - test latest version
+        uses: ./
+        with:
+          # Vulkan SDK version to download. Default: latest version.
+          vulkan_version: latest
+          optional_components: com.lunarg.vulkan.vma, com.lunarg.vulkan.volk
+          install_runtime: true
+          cache: true
+          stripdown: true
+
+      - name: Show Env Vars and SDK folder (Linux)
+        if: contains(matrix.config.OS, 'ubuntu')
+        run: |
+          echo PATH = $PATH
+          echo VULKAN_VERSION = $VULKAN_VERSION
+          echo VULKAN_SDK = $VULKAN_SDK
+          echo VK_LAYER_PATH = $VK_LAYER_PATH
+          echo LD_LIBRARY_PATH = $LD_LIBRARY_PATH
+          echo Folder size = `du -hs $VULKAN_SDK`
+
+      - name: Show Env Vars and SDK folder (Windows)
+        if: contains(matrix.config.OS, 'windows')
+        working-directory: ${{env.VULKAN_SDK}}
+        run: |
+          echo $env:PATH
+          echo $env:VULKAN_VERSION
+          echo $env:VULKAN_SDK
+          Get-ChildItem -File -Recurse
+          $folderSizeMB = (Get-ChildItem -File -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
+          "Folder size: {0:N2} MB" -f $folderSizeMB
+
+      - name: Show Env Vars and SDK folder (MAC)
+        if: contains(matrix.config.OS, 'mac')
+        run: |
+          echo PATH = $PATH
+          echo VULKAN_VERSION = $VULKAN_VERSION
+          echo VULKAN_SDK = $VULKAN_SDK
+          echo VK_LAYER_PATH = $VK_LAYER_PATH
+          echo DYLD_LIBRARY_PATH = $DYLD_LIBRARY_PATH
+          echo Folder size = `du -hs $VULKAN_SDK`
+
+# ---------------------------------------------------------------------------------------
+
+  test-old-version: # makes sure the action works on a clean machine without building (user case)
+
+# ---------------------------------------------------------------------------------------
+
+    name: Install OLD SDK version on ${{ matrix.config.OS }}
     runs-on: ${{ matrix.config.OS }}
 
     strategy:
