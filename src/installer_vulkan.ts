@@ -30,14 +30,15 @@ export async function installVulkanSdk(
 
   core.info(`📦 Extracting Vulkan SDK...`)
 
+  // changing the destination to a versionised folder, e.g. "/Users/runner/vulkan-sdk/1.4.304.0"
+  const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
+
   if (platform.IS_MAC) {
     // handle version dependend installation procedure change (dmg/zip)
     if (version <= '1.3.290.0') {
       // the sdk is a .dmg
-      installPath = await installVulkanSdkMacDmg(sdkPath, destination, optionalComponents)
+      installPath = await installVulkanSdkMacDmg(sdkPath, versionizedDestinationPath, optionalComponents)
     } else {
-      // changing the destination to a versionised folder "/Users/runner/vulkan-sdk/1.4.304.0"
-      const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
       // the sdk is a .zip
       installPath = await installVulkanSdkMacZip(sdkPath, versionizedDestinationPath, optionalComponents)
     }
@@ -45,8 +46,6 @@ export async function installVulkanSdk(
     // the archive extracts a "1.3.250.1" top-level dir
     installPath = await installVulkanSdkLinux(sdkPath, destination, optionalComponents)
   } else if (platform.IS_WINDOWS || platform.IS_WARM) {
-    // changing the destination to a versionised folder "C:\VulkanSDK\1.3.250.1"
-    const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
     installPath = await installVulkanSdkWindows(sdkPath, versionizedDestinationPath, optionalComponents)
   }
 
