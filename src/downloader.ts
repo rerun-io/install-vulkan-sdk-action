@@ -42,18 +42,6 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
     vulkanSdkUrl = `${downloadBaseUrl}/InstallVulkanARM64-${version}.exe`
   }
 
-  // vulkansdk-ubuntu-24.04-arm-1.4.304.0.tar.xz
-  // vulkansdk-ubuntu-20.04-arm-1.4.304.0.tar.xz
-  if (platform.IS_LINUX && platform.OS_ARCH === 'arm64') {
-    let distributionVersion = '24.04' // default to 24.04
-    if (platform.getLinuxDistributionVersionId() === '20.04') {
-      distributionVersion = '20.04'
-    }
-    // https://github.com/jakoch/vulkan-sdk-arm/releases/download/1.4.304.0/vulkansdk-ubuntu-22.04-arm-1.4.304.0.tar.xz
-    const downloadBaseUrl = `https://github.com/jakoch/vulkan-sdk-arm/releases/download/${version}`
-    vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-ubuntu-${distributionVersion}-arm-${version}.tar.xz`
-  }
-
   if (platform.IS_LINUX) {
     // For versions up to 1.3.250.1 the ending is ".tar.gz".
     // For versions after 1.3.250.1 the ending is ".tar.xz".
@@ -62,6 +50,16 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
       extension = 'tar.xz'
     }
     vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-linux-x86_64-${version}.${extension}`
+  }
+
+  if (platform.IS_LINUX && platform.OS_ARCH === 'arm64') {
+    let distributionVersion = '24.04' // default to 24.04
+    if (platform.getLinuxDistributionVersionId() === '22.04') {
+      distributionVersion = '22.04'
+    }
+    // https://github.com/jakoch/vulkan-sdk-arm/releases/download/1.4.304.0/vulkansdk-ubuntu-22.04-arm-1.4.304.0.tar.xz
+    const downloadBaseUrl = `https://github.com/jakoch/vulkan-sdk-arm/releases/download/${version}`
+    vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-ubuntu-${distributionVersion}-arm-${version}.tar.xz`
   }
 
   if (platform.IS_MAC) {
