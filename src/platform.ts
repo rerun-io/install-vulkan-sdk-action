@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as os from 'node:os'
+import * as fs from 'node:fs'
 
 export const HOME_DIR: string = os.homedir() // $HOME
 
@@ -36,4 +37,24 @@ export function getPlatform(): string {
     return 'mac'
   }
   return OS_PLATFORM
+}
+
+/**
+ * Determines the Linux distribution version.
+ * This function helps to differentiate between Ubuntu "20.04" and "24.04".
+ *
+ * Alternative: source /etc/os-release ; echo -n "$VERSION_ID"
+ *
+ * @export
+ */
+export function getLinuxDistributionVersionId(): string {
+  const osReleasePath = '/etc/os-release'
+  if (fs.existsSync(osReleasePath)) {
+    const osReleaseContent = fs.readFileSync(osReleasePath, 'utf8')
+    const versionMatch = osReleaseContent.match(/VERSION_ID="(\d+\.\d+)"/)
+    if (versionMatch) {
+      return versionMatch[1]
+    }
+  }
+  return ''
 }

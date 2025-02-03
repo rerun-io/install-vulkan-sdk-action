@@ -37,7 +37,7 @@ jobs:
 # ---------------------------------------------------------------------------------------
 
     # install latest version sdk on all platforms
-    name: Install latest - ${{ matrix.config.OS }}
+    name: Install latest SDK on ${{ matrix.config.OS }}
     runs-on: ${{ matrix.config.OS }}
 
     strategy:
@@ -47,7 +47,7 @@ jobs:
           # https://github.com/actions/runner-images/tree/main/images
           - { OS: windows-2025 }
           - { OS: ubuntu-24.04 }
-          #- { OS: ubuntu-24.04-arm } disabled, because downloads not ready yet
+          - { OS: ubuntu-24.04-arm }
           - { OS: macos-15     }
           #- { OS: macos-15-arm }
 
@@ -104,7 +104,7 @@ jobs:
 # ---------------------------------------------------------------------------------------
 
     # install old version sdk on all platforms
-    name: Install old - ${{ matrix.config.OS }}
+    name: Install old SDK on ${{ matrix.config.OS }}
     runs-on: ${{ matrix.config.OS }}
 
     strategy:
