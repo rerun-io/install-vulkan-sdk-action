@@ -32,20 +32,14 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
 
   let vulkanSdkUrl = ''
 
-  if (platform.IS_WINDOWS) {
-    vulkanSdkUrl = `${downloadBaseUrl}/VulkanSDK-${version}-Installer.exe`
-  } else if (platform.IS_WINDOWS_ARM) {
+  // note: condition order matters, e.g. IS_WINDOWS_ARM before IS_WINDOWS
+
+  if (platform.IS_WINDOWS_ARM) {
     // well, installer naming scheme is off, compared to the other platforms
     // at least a minus is missing here... InstallVulkan-ARM64
     vulkanSdkUrl = `${downloadBaseUrl}/InstallVulkanARM64-${version}.exe`
-  } else if (platform.IS_LINUX) {
-    // For versions up to 1.3.250.1 the ending is ".tar.gz".
-    // For versions after 1.3.250.1 the ending is ".tar.xz".
-    let extension = 'tar.gz'
-    if (1 === versions.compare(version, '1.3.250.1')) {
-      extension = 'tar.xz'
-    }
-    vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-linux-x86_64-${version}.${extension}`
+  } else if (platform.IS_WINDOWS) {
+    vulkanSdkUrl = `${downloadBaseUrl}/VulkanSDK-${version}-Installer.exe`
   } else if (platform.IS_LINUX_ARM) {
     let distributionVersion = '24.04' // default to 24.04
     if (platform.getLinuxDistributionVersionId() === '22.04') {
@@ -54,6 +48,14 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
     // https://github.com/jakoch/vulkan-sdk-arm/releases/download/1.4.304.0/vulkansdk-ubuntu-22.04-arm-1.4.304.0.tar.xz
     const downloadBaseUrl = `https://github.com/jakoch/vulkan-sdk-arm/releases/download/${version}`
     vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-ubuntu-${distributionVersion}-arm-${version}.tar.xz`
+  } else if (platform.IS_LINUX) {
+    // For versions up to 1.3.250.1 the ending is ".tar.gz".
+    // For versions after 1.3.250.1 the ending is ".tar.xz".
+    let extension = 'tar.gz'
+    if (1 === versions.compare(version, '1.3.250.1')) {
+      extension = 'tar.xz'
+    }
+    vulkanSdkUrl = `${downloadBaseUrl}/vulkansdk-linux-x86_64-${version}.${extension}`
   } else if (platform.IS_MAC) {
     // For versions up to 1.3.290.0 the ending is ".dmg".
     // For versios after 1.3.290.0 the ending is ".zip".
