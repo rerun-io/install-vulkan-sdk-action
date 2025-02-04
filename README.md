@@ -23,7 +23,9 @@ A Github Action to install the Vulkan SDK and it's runtime.
     - [Environment Variables](#environment-variables)
   - [License](#license)
 
-## What is Vulkan?
+## About Vulkan
+
+### What is Vulkan?
 
 > The [Khronos Vulkan API](https://khronos.org/registry/vulkan) is an explicit, low-overhead, cross-platform graphics and compute API. Vulkan provides applications with control over the system execution and the system memory to maximize application efficiency on a wide variety of devices from PCs and consoles to mobile phones and embedded platforms.
 >
@@ -31,6 +33,51 @@ A Github Action to install the Vulkan SDK and it's runtime.
 >
 
 Links: <https://vulkan.org/> | [Vulkan SDK](https://vulkan.lunarg.com/) | [Vulkan SDK Docs](https://vulkan.lunarg.com/doc/sdk/) | [Vulkan Tools](https://vulkan.org/tools) | [Vulkan @ gpuinfo](https://vulkan.gpuinfo.org/)
+
+## What is the Vulkan SDK?
+
+The Vulkan Software Development Kit (SDK) is a collection of tools, libraries,
+headers, and validation layers needed to develop Vulkan applications.
+
+It includes:
+
+- Vulkan API headers: Required for compiling Vulkan applications.
+- Validation layers: Help debug and validate Vulkan API usage.
+- SPIR-V tools: For compiling and optimizing shader code.
+- Sample code and documentation: To help developers learn Vulkan.
+- Loader and drivers: Ensures proper Vulkan function dispatch.
+
+The Vulkan SDK is provided by LunarG and is essential for developers who want
+to build and test Vulkan-based applications.
+
+## What is the Vulkan SDK for ARM?
+
+The Vulkan SDK for ARM is an unofficial custom build SDK based on the official
+tarballs for Linux and build on Github Actions runners
+(ubuntu-24.04-arm, ubuntu-22.04-arm).
+
+The installer uses releases from https://github.com/jakoch/vulkan-sdk-arm.
+
+Currently (02-2025), KHRONOS has no plans to modify the official tarball to
+include prebuilt ARM binaries or to release or update the Ubuntu packages for ARM.
+
+## What is the Vulkan Runtime?
+
+The Vulkan Runtime (VulkanRT) refers to the essential Vulkan libraries and
+drivers installed on a system, allowing Vulkan applications to run.
+
+It typically includes:
+
+- The Vulkan loader: Manages Vulkan function calls and interfaces with GPU drivers.
+- Runtime libraries: Required to execute Vulkan applications.
+
+Unlike the SDK, the Vulkan Runtime is typically installed automatically
+by your GPU driver (from NVIDIA, AMD, or Intel) and is needed for running
+Vulkan applications.
+
+This installer enables you to install the latest Vulkan Runtime for development,
+allowing you to test your applications with the most up-to-date runtime and
+bundle it for redistribution when packaging your application.
 
 ## Usage
 
