@@ -134,11 +134,7 @@ async function run(): Promise<void> {
       inputs.installRuntime
     )
 
-    // let install_path be a versionized path to the SDK
-    let installPath = sdkPath
-    if (!sdkPath.includes(version)) {
-      installPath = path.normalize(`${sdkPath}/${version}`)
-    }
+    const installPath = installerVulkan.getVulkanSdkPath(sdkPath, version)
 
     if (installerVulkan.verifyInstallationOfSdk(installPath)) {
       // Setup Paths to the Vulkan SDK
@@ -150,7 +146,8 @@ async function run(): Promise<void> {
       // We set PATH, VULKAN_SDK, VK_LAYER_PATH, LD_LIBRARY_PATH and additionally VULKAN_VERSION.
 
       // export PATH=$VULKAN_SDK/bin:$PATH
-      core.addPath(`${installPath}/bin`)
+      const binFolder = path.normalize(`${installPath}/bin`)
+      core.addPath(binFolder)
       core.info(`✔️ [PATH] Added path to Vulkan SDK to environment variable PATH.`)
 
       // export VULKAN_SDK=~/vulkan/1.x.yy.z/x86_64

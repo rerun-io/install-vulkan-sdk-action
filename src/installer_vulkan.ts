@@ -351,25 +351,65 @@ async function extractArchive(file: string, destination: string): Promise<string
  * MacOS:     "/usr/vulkan-sdk/1.2.3.4/macOS/bin/vulkaninfo"
  * Linux ARM: "/usr/vulkan-sdk/1.2.3.4/aarch64/bin/vulkaninfo"
  *
- * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.2.3.4"
+ * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.2.3.4\x86_64".
  * @return {*}  {string}
  * @export
  */
 export function getVulkanInfoPath(sdkInstallPath: string): string {
-  // note: LINUX_ARM must be checked before LINUX
-  if (platform.IS_LINUX_ARM) {
-    return path.join(sdkInstallPath, 'aarch64/bin/vulkaninfo')
-  }
-  if (platform.IS_LINUX) {
-    return path.join(sdkInstallPath, 'x86_64/bin/vulkaninfo')
-  }
   if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     return path.join(sdkInstallPath, 'bin/vulkaninfoSDK.exe')
   }
+  if (platform.IS_LINUX || platform.IS_LINUX_ARM) {
+    return path.join(sdkInstallPath, 'bin/vulkaninfo')
+  }
   if (platform.IS_MAC) {
-    return path.join(sdkInstallPath, 'macOS/bin/vulkaninfo')
+    return path.join(sdkInstallPath, 'bin/vulkaninfo')
   }
   return path.join(sdkInstallPath, 'bin/vulkaninfo')
+}
+
+/**
+ * Get the path to Vulkan SDK with version and target architecture.
+ * The path is platform dependent.
+ *
+ * Windows:   "C:\VulkanSDK\"
+ * Linux:     "/usr/vulkan-sdk/1.2.3.4/x86_64/"
+ * MacOS:     "/usr/vulkan-sdk/1.2.3.4/macOS/"
+ * Linux ARM: "/usr/vulkan-sdk/1.2.3.4/aarch64/"
+ *
+ * @param {string} sdk_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\
+ * @param {string} version - The version of the Vulkan SDK
+ * @return {*}  {string}
+ * @export
+ */
+export function getVulkanSdkPath(sdkPath: string, version: string): string {
+  // let install_path be a versionized path to the SDK
+  let installPath = ''
+  if (!sdkPath.includes(version)) {
+    installPath = path.join(sdkPath, version)
+  }
+  // let install_path contain the target architecture (x86_64, aarch64)
+  if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
+    // windows has no target architecture, its just "C:\VulkanSDK\bin"
+    // fallthrough
+  }
+  // note: LINUX_ARM must be checked before LINUX
+  if (platform.IS_LINUX_ARM) {
+    installPath = path.join(installPath, 'aarch64')
+  }
+  if (platform.IS_LINUX) {
+    installPath = path.join(installPath, 'x86_64')
+  }
+  if (platform.IS_MAC) {
+    installPath = path.join(installPath, 'macOS')
+  }
+
+  // lets check if the path with version and target arch exists
+  if (!fs.existsSync(installPath)) {
+    core.warning(`Vulkan SDK path doesn't exist: ${installPath}`)
+  }
+
+  return installPath
 }
 
 /**
@@ -378,7 +418,7 @@ export function getVulkanInfoPath(sdkInstallPath: string): string {
  * The verification is done by checking the existence of the "vulkaninfo" executable.
  *
  * @export
- * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
+ * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1\x86_x64".
  * @return {*}  {boolean}
  */
 export function verifyInstallationOfSdk(sdkInstallPath: string): boolean {
