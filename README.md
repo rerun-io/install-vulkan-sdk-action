@@ -14,7 +14,11 @@ A Github Action to install the Vulkan SDK and it's runtime.
 ---
 
 - [Github Action: Install Vulkan SDK](#github-action-install-vulkan-sdk)
-  - [What is Vulkan?](#what-is-vulkan)
+  - [About Vulkan](#about-vulkan)
+    - [What is Vulkan?](#what-is-the-vulkan-sdk)
+    - [What is the Vulkan SDK?](#what-is-the-vulkan-sdk)
+    - [What is the Vulkan SDK for ARM?](#what-is-the-vulkan-sdk-for-arm)
+    - [What is the Vulkan Runtime?](#what-is-the-vulkan-runtime)
   - [Usage](#usage)
     - [Quick start](#quick-start)
   - [Action Reference](#action-reference)
@@ -90,9 +94,15 @@ jobs:
     strategy:
       matrix:
         config:
-          - { name: "Windows", os: windows-latest }
-          - { name: "Ubuntu",  os: ubuntu-latest }
-          #- { name: "MacOS",   os: macos-latest } not supported, yet
+          - { name: "Windows",       os: windows-latest }
+          - { name: "Ubuntu",        os: ubuntu-latest }
+          - { name: "MacOS",         os: macos-latest }
+          - { name: "Ubuntu 22 Arm", os: ubuntu-22.04-arm }
+          - { name: "Ubuntu 24 Arm", os: ubuntu-24.04-arm }
+          # The installer supports the target platform,
+          # but Github Actions doesn't provide the runner, yet.
+          # It's expected in Q2 2025.
+          # - { name: "Windows 2025 Arm", os: windows-2025-arm }
 
     steps:
       - name: Install Vulkan SDK
