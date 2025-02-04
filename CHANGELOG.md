@@ -11,9 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - "It was a bright day in April, and the clocks were striking thirteen." - 1984
 
+## [1.1.0] - 2024-02-04
+
 ### Added
-- install the Windows ARM64 SDK and RT, [#487](https://github.com/jakoch/install-vulkan-sdk-action/issues/487)
-- install Vulkan SDK for MAC, [#293](https://github.com/jakoch/install-vulkan-sdk-action/issues/293)
+- install Vulkan SDK for MACOS, [#293](https://github.com/jakoch/install-vulkan-sdk-action/issues/293)
+- install Vulkan SDK for ARM64 (aarch64) on Windows and Linux, [#487](https://github.com/jakoch/install-vulkan-sdk-action/issues/487)
 
 ### Changed
 - moved downloader.is_downloadable() to http.isDownloadable()
@@ -85,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Section for Reference Links -->
 
-[vNext]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.6...HEAD
+[vNext]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.6...v1.1.0
 [1.0.6]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/jakoch/install-vulkan-sdk-action/compare/v1.0.3...v1.0.4
