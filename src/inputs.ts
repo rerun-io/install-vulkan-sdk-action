@@ -104,7 +104,7 @@ export function getInputDestination(destination: string): string {
     }
     // The .tar.gz file extracts the SDK into a versionized directory of the form 1.x.y.z.
     // The official docs install into the "~" ($HOME) folder.
-    if (platform.IS_LINUX) {
+    if (platform.IS_LINUX || platform.IS_LINUX_ARM) {
       destination = `${platform.HOME_DIR}/vulkan-sdk`
     }
     // The macOS SDK is intended to be installed anywhere the user can place files such as the user's $HOME directory.

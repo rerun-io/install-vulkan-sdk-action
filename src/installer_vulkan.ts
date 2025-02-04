@@ -42,7 +42,7 @@ export async function installVulkanSdk(
       // the sdk is a .zip
       installPath = await installVulkanSdkMacZip(sdkPath, versionizedDestinationPath, optionalComponents)
     }
-  } else if (platform.IS_LINUX) {
+  } else if (platform.IS_LINUX || platform.IS_LINUX_ARM) {
     // the archive extracts a "1.3.250.1" top-level dir
     installPath = await installVulkanSdkLinux(sdkPath, destination, optionalComponents)
   } else if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
@@ -325,7 +325,7 @@ async function extractArchive(file: string, destination: string): Promise<string
       // No extraction needed for .dmg files, we just mount them
       return destination
     }
-  } else if (platform.IS_LINUX) {
+  } else if (platform.IS_LINUX || platform.IS_LINUX_ARM) {
     if (file.endsWith('.tar.gz')) {
       // extractTar defaults to 'xz' (extracting gzipped tars).
       extract = (file, destination) => tc.extractTar(file, destination)
@@ -356,14 +356,15 @@ async function extractArchive(file: string, destination: string): Promise<string
  * @export
  */
 export function getVulkanInfoPath(sdkInstallPath: string): string {
+  // note: LINUX_ARM must be checked before LINUX
+  if (platform.IS_LINUX_ARM) {
+    return path.join(sdkInstallPath, 'aarch64/bin/vulkaninfo')
+  }
   if (platform.IS_LINUX) {
     return path.join(sdkInstallPath, 'x86_64/bin/vulkaninfo')
   }
   if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     return path.join(sdkInstallPath, 'bin/vulkaninfoSDK.exe')
-  }
-  if (platform.IS_LINUX_ARM) {
-    return path.join(sdkInstallPath, 'aarch64/bin/vulkaninfo')
   }
   if (platform.IS_MAC) {
     return path.join(sdkInstallPath, 'macOS/bin/vulkaninfo')
