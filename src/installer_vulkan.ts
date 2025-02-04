@@ -384,15 +384,15 @@ export function getVulkanInfoPath(sdkInstallPath: string): string {
  */
 export function getVulkanSdkPath(sdkPath: string, version: string): string {
   // let install_path be a versionized path to the SDK
-  let installPath = ''
+  let installPath = sdkPath
   if (!sdkPath.includes(version)) {
     installPath = path.join(sdkPath, version)
   }
 
   // let install_path contain the target architecture (x86_64, aarch64)
   if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
-    // windows has no target architecture, its just "C:\VulkanSDK\bin"
-    // fallthrough
+    // windows has no target architecture, its just "C:\VulkanSDK\1.4.304.0\bin"
+    // install_path is a versionized path, fallthrough
   }
   // note: LINUX_ARM must be checked before LINUX
   else if (platform.IS_LINUX_ARM) {
