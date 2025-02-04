@@ -388,19 +388,18 @@ export function getVulkanSdkPath(sdkPath: string, version: string): string {
   if (!sdkPath.includes(version)) {
     installPath = path.join(sdkPath, version)
   }
+
   // let install_path contain the target architecture (x86_64, aarch64)
   if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     // windows has no target architecture, its just "C:\VulkanSDK\bin"
     // fallthrough
   }
   // note: LINUX_ARM must be checked before LINUX
-  if (platform.IS_LINUX_ARM) {
+  else if (platform.IS_LINUX_ARM) {
     installPath = path.join(installPath, 'aarch64')
-  }
-  if (platform.IS_LINUX) {
+  } else if (platform.IS_LINUX) {
     installPath = path.join(installPath, 'x86_64')
-  }
-  if (platform.IS_MAC) {
+  } else if (platform.IS_MAC) {
     installPath = path.join(installPath, 'macOS')
   }
 
