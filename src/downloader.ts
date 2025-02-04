@@ -36,7 +36,7 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
     vulkanSdkUrl = `${downloadBaseUrl}/VulkanSDK-${version}-Installer.exe`
   }
 
-  if (platform.IS_WARM) {
+  if (platform.IS_WINDOWS_ARM) {
     // well, installer naming scheme is off, compared to the other platforms
     // at least a minus is missing here... InstallVulkan-ARM64
     vulkanSdkUrl = `${downloadBaseUrl}/InstallVulkanARM64-${version}.exe`
@@ -142,7 +142,7 @@ export async function downloadVulkanRuntime(version: string): Promise<string> {
  * @return {*}  {string} Platform-based name for the Vulkan SDK archive or installer.
  */
 export function getVulkanSdkFilename(version: string): string {
-  if (platform.IS_WINDOWS || platform.IS_WARM) {
+  if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     return `VulkanSDK-Installer.exe`
   }
   if (platform.IS_LINUX) {

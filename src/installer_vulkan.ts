@@ -45,7 +45,7 @@ export async function installVulkanSdk(
   } else if (platform.IS_LINUX) {
     // the archive extracts a "1.3.250.1" top-level dir
     installPath = await installVulkanSdkLinux(sdkPath, destination, optionalComponents)
-  } else if (platform.IS_WINDOWS || platform.IS_WARM) {
+  } else if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     installPath = await installVulkanSdkWindows(sdkPath, versionizedDestinationPath, optionalComponents)
   }
 
@@ -309,7 +309,7 @@ async function extractArchive(file: string, destination: string): Promise<string
     throw new Error('Extraction function is not properly assigned.')
   }
 
-  if (platform.IS_WINDOWS || platform.IS_WARM) {
+  if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     if (file.endsWith('.exe')) {
       // No extraction needed for .exe files
       return destination
@@ -346,9 +346,10 @@ async function extractArchive(file: string, destination: string): Promise<string
  * Get the path to the "vulkaninfo" executable.
  * The path is platform dependent.
  *
- * On Windows, the path is "C:\VulkanSDK\bin\vulkaninfoSDK.exe"
- * On Linux, the path is "/usr/vulkan-sdk/1.2.3.4/bin/vulkaninfo"
- * On MacOS, the path is "/usr/vulkan-sdk/1.2.3.4/macOS/bin/vulkaninfo"
+ * Windows:   "C:\VulkanSDK\bin\vulkaninfoSDK.exe"
+ * Linux:     "/usr/vulkan-sdk/1.2.3.4/x86_64/bin/vulkaninfo"
+ * MacOS:     "/usr/vulkan-sdk/1.2.3.4/macOS/bin/vulkaninfo"
+ * Linux ARM: "/usr/vulkan-sdk/1.2.3.4/aarch64/bin/vulkaninfo"
  *
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.2.3.4"
  * @return {*}  {string}
@@ -358,8 +359,11 @@ export function getVulkanInfoPath(sdkInstallPath: string): string {
   if (platform.IS_LINUX) {
     return path.join(sdkInstallPath, 'x86_64/bin/vulkaninfo')
   }
-  if (platform.IS_WINDOWS || platform.IS_WARM) {
+  if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     return path.join(sdkInstallPath, 'bin/vulkaninfoSDK.exe')
+  }
+  if (platform.IS_LINUX_ARM) {
+    return path.join(sdkInstallPath, 'aarch64/bin/vulkaninfo')
   }
   if (platform.IS_MAC) {
     return path.join(sdkInstallPath, 'macOS/bin/vulkaninfo')
@@ -420,7 +424,7 @@ export function runVulkanInfo(vulkanInfoPath: string): void {
  */
 export function verifyInstallationOfRuntime(sdkInstallPath: string): boolean {
   let r = false
-  if (platform.IS_WINDOWS || platform.IS_WARM) {
+  if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     const file = `${sdkInstallPath}/runtime/x64/vulkan-1.dll`
     r = fs.existsSync(file)
   }
@@ -437,7 +441,7 @@ export function verifyInstallationOfRuntime(sdkInstallPath: string): boolean {
  * @param {string} sdk_install_path - The installation path of the Vulkan SDK, e.g. "C:\VulkanSDK\1.3.250.1".
  */
 export function stripdownInstallationOfSdk(sdkInstallPath: string): void {
-  if (platform.IS_WINDOWS || platform.IS_WARM) {
+  if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
     core.info(`✂ Reducing Vulkan SDK size before caching`)
     let foldersToDelete: string[] = []
     foldersToDelete = [

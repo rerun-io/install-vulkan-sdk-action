@@ -56,7 +56,7 @@ async function getVulkanSdk(
   // restore from cache
   if (useCache) {
     let cacheHit = undefined
-    if (platform.IS_WINDOWS || platform.IS_WARM) {
+    if (platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) {
       const versionizedDestinationPath = path.normalize(`${destination}/${version}`)
       cacheHit = await cache.restoreCache([versionizedDestinationPath], cachePrimaryKey, cacheRestoreKeys)
     } else {
@@ -81,7 +81,7 @@ async function getVulkanSdk(
   installPath = await installerVulkan.installVulkanSdk(vulkanSdkPath, destination, version, optionalComponents)
 
   // Download and install Runtime after the SDK. This allows caching both.
-  if ((platform.IS_WINDOWS || platform.IS_WARM) && installRuntime) {
+  if ((platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) && installRuntime) {
     const vulkanRuntimePath = await downloader.downloadVulkanRuntime(version)
     await installerVulkan.installVulkanRuntime(vulkanRuntimePath, destination, version)
   }
@@ -182,7 +182,7 @@ async function run(): Promise<void> {
       core.warning(`Could not find Vulkan SDK in ${installPath}`)
     }
 
-    if ((platform.IS_WINDOWS || platform.IS_WARM) && inputs.installRuntime) {
+    if ((platform.IS_WINDOWS || platform.IS_WINDOWS_ARM) && inputs.installRuntime) {
       const runtimePath = `${installPath}\\runtime`
       if (installerVulkan.verifyInstallationOfRuntime(installPath)) {
         core.info(`✔️ [INFO] Path to Vulkan Runtime: ${runtimePath}`)

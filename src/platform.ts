@@ -14,7 +14,9 @@ export const OS_ARCH: string = os.arch() // x64, arm64
 export const IS_WINDOWS: boolean = OS_PLATFORM === 'win32'
 export const IS_LINUX: boolean = OS_PLATFORM === 'linux'
 export const IS_MAC: boolean = OS_PLATFORM === 'darwin'
-export const IS_WARM: boolean = IS_WINDOWS && OS_ARCH === 'arm64'
+
+export const IS_WINDOWS_ARM: boolean = IS_WINDOWS && OS_ARCH === 'arm64'
+export const IS_LINUX_ARM: boolean = IS_LINUX && OS_ARCH === 'arm64'
 
 export const TEMP_DIR: string = os.tmpdir()
 
@@ -29,7 +31,7 @@ export function getPlatform(): string {
     // win32 => windows
     return 'windows'
   }
-  if (IS_WARM) {
+  if (IS_WINDOWS_ARM) {
     return 'warm'
   }
   if (IS_MAC) {

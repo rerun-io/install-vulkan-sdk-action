@@ -104,7 +104,7 @@ function getLatestVersionForPlatform(latestVersion: LatestVersionResponse): stri
   if (platform.IS_WINDOWS) {
     return latestVersion.windows
   }
-  if (platform.IS_WARM) {
+  if (platform.IS_WINDOWS_ARM) {
     return latestVersion.warm
   }
   if (platform.IS_LINUX) {
