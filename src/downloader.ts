@@ -28,7 +28,7 @@ export async function getUrlVulkanSdk(version: string): Promise<string> {
   // Latest Version: https://sdk.lunarg.com/sdk/download/latest/warm/vulkan_sdk.exe
   // Versionized:    https://sdk.lunarg.com/sdk/download/1.4.304.0/warm/InstallVulkanARM64-1.4.304.0.exe
 
-  const downloadBaseUrl = `https://sdk.lunarg.com/sdk/download/${version}/${platformName}`
+  const downloadBaseUrl = 'https://storage.googleapis.com/rerun-test-assets/vulkan/${version}/${platformName}'
 
   let vulkanSdkUrl = ''
 
